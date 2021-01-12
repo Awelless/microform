@@ -1,21 +1,28 @@
 package com.softarex.internship.util;
 
 import com.softarex.internship.domain.User;
-import lombok.AllArgsConstructor;
-import lombok.NonNull;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.NonNull;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
 @Component
-@AllArgsConstructor
 public class MailSender {
+    @Value("${spring.mail.username}")
+    private String emailFrom;
+
     private final JavaMailSender javaMailSender;
 
-    private void send(String email, String subject, String message) {
+    public MailSender(JavaMailSender javaMailSender) {
+        this.javaMailSender = javaMailSender;
+    }
+
+    private void send(@NonNull final String emailTo, @NonNull final String subject, @NonNull final String message) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
 
-        mailMessage.setTo(email);
+        mailMessage.setFrom(emailFrom);
+        mailMessage.setTo(emailTo);
         mailMessage.setSubject(subject);
         mailMessage.setText(message);
 

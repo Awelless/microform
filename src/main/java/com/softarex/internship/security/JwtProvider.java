@@ -2,8 +2,7 @@ package com.softarex.internship.security;
 
 import com.softarex.internship.exception.JwtAuthenticationException;
 import io.jsonwebtoken.*;
-import lombok.AllArgsConstructor;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,16 +14,19 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 @Component
-@AllArgsConstructor
 public class JwtProvider {
     @Value("${jwt.header}")
-    private final String jwtHeader;
+    private String jwtHeader;
     @Value("${jwt.secret}")
-    private final String jwtSecret;
+    private String jwtSecret;
     @Value("${jwt.expiration}")
-    private final Integer jwtValidityTime;
+    private Integer jwtValidityTime;
 
     private final UserDetailsService userDetailsService;
+
+    public JwtProvider(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     public String createToken(@NonNull final String username) {
         Claims claims = Jwts.claims().setSubject(username);

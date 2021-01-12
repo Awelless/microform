@@ -1,10 +1,11 @@
 package com.softarex.internship.service;
 
 import com.softarex.internship.domain.User;
+import com.softarex.internship.exception.UserNotUniqueException;
 import com.softarex.internship.repository.UserRepository;
 import com.softarex.internship.util.MailSender;
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,13 @@ public class UserService {
     }
 
     public User create(@NonNull final User user) {
+        if (userRepository.getByUsername(user.getUsername()) != null) {
+            throw new UserNotUniqueException("Username is already taken");
+        }
+        if (userRepository.getByEmail(user.getEmail()) != null) {
+            throw new UserNotUniqueException("Email is already taken");
+        }
+
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
 

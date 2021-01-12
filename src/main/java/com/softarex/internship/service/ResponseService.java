@@ -4,7 +4,7 @@ import com.softarex.internship.domain.Response;
 import com.softarex.internship.repository.ResponseRepository;
 import com.softarex.internship.util.WebSocketSender;
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

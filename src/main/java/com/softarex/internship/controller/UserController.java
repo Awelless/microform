@@ -1,15 +1,16 @@
 package com.softarex.internship.controller;
 
 import com.softarex.internship.domain.User;
+import com.softarex.internship.exception.UserNotUniqueException;
 import com.softarex.internship.security.AuthenticationService;
 import com.softarex.internship.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
@@ -26,8 +27,13 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userService.create(user);
+    public ResponseEntity<?> createUser(@RequestBody User user) {
+        try {
+            user = userService.create(user);
+            return ResponseEntity.ok(user);
+        } catch (UserNotUniqueException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
+        }
     }
 
     @PutMapping
@@ -51,11 +57,12 @@ public class UserController {
 
         User user = userService.updatePassword(currentUser, newPassword);
 
-        String token = authenticationService.authenticate(user);
+        try {
+            authenticationService.authenticate(user, response);
+            return new ResponseEntity<>(HttpStatus.OK);
 
-        Cookie authCookie = new Cookie("Authorization", token);
-        response.addCookie(authCookie);
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        } catch (AuthenticationException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        }
     }
 }

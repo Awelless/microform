@@ -45,7 +45,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
     }
 
-    private void sendErrorMessage(HttpServletResponse response, @NonNull final String message) throws IOException {
+    private void sendErrorMessage(@NonNull HttpServletResponse response, @NonNull final String message) throws IOException {
         response.resetBuffer();
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

@@ -4,7 +4,7 @@ import com.softarex.internship.domain.field.Field;
 import com.softarex.internship.repository.FieldRepository;
 import com.softarex.internship.repository.ResponseRepository;
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
+import org.springframework.lang.NonNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 

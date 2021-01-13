@@ -3,8 +3,12 @@ package com.softarex.internship.controller;
 import com.softarex.internship.domain.field.Field;
 import com.softarex.internship.service.FieldService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -24,16 +28,37 @@ public class FieldController {
     }
 
     @PostMapping
-    public Field createField(@RequestBody Field field) {
-        return fieldService.create(field);
+    public ResponseEntity<?> createField(@Valid @RequestBody Field field, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ControllerUtils.getErrorResponse(bindingResult);
+        }
+
+        //Field options validation is handled in the fieldService
+        try {
+            Field fieldFromDb = fieldService.create(field);
+            return ResponseEntity.ok(fieldFromDb);
+        } catch (IllegalArgumentException e) {
+            return ControllerUtils.getErrorResponse(e, HttpStatus.UNPROCESSABLE_ENTITY);
+        }
     }
 
     @PutMapping("/{id}")
-    public Field updateField(
+    public ResponseEntity<?> updateField(
             @RequestParam("id") Field oldField,
-            @RequestBody Field newField
+            @Valid @RequestBody Field newField,
+            BindingResult bindingResult
     ) {
-        return fieldService.update(oldField, newField);
+        if (bindingResult.hasErrors()) {
+            return ControllerUtils.getErrorResponse(bindingResult);
+        }
+
+        //Field options validation is handled in the fieldService
+        try {
+            Field fieldFromDb = fieldService.update(oldField, newField);
+            return ResponseEntity.ok(fieldFromDb);
+        } catch (IllegalArgumentException e) {
+            return ControllerUtils.getErrorResponse(e, HttpStatus.UNPROCESSABLE_ENTITY);
+        }
     }
 
     @DeleteMapping("/{id}")

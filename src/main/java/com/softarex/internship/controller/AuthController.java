@@ -1,14 +1,13 @@
 package com.softarex.internship.controller;
 
-import com.softarex.internship.domain.User;
 import com.softarex.internship.security.AuthenticationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,14 +20,17 @@ public class AuthController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User user, HttpServletResponse response) {
+    public ResponseEntity<?> login(
+            @RequestParam String username,
+            @RequestParam String password,
+            HttpServletResponse response
+    ) {
         try {
-            authenticationService.authenticate(user, response);
+            authenticationService.authenticate(username, password, response);
             return new ResponseEntity<>(HttpStatus.OK);
 
         } catch (AuthenticationException e) {
-
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+            return ControllerUtils.getErrorResponse(e, HttpStatus.UNAUTHORIZED);
         }
     }
 

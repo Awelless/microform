@@ -29,6 +29,10 @@ public class MailSender {
         new Thread(() -> javaMailSender.send(mailMessage)).start();
     }
 
+    /**
+     * Sends account creation notification to user
+     * @param user The User to whom the message is sending
+     */
     public void sendActivationMessage(@NonNull final User user) {
         String subject = "Account is created";
         String message = String.format(
@@ -40,6 +44,10 @@ public class MailSender {
         send(user.getEmail(), subject, message);
     }
 
+    /**
+     * Sends password change notification to user
+     * @param user The User to whom the message is sending
+     */
     public void sendPasswordChangeMessage(@NonNull final User user) {
         String subject = "Password is changed";
         String message = String.format(

@@ -18,12 +18,12 @@ public class Response {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
             name = "response_field",
             joinColumns = @JoinColumn(name = "response_id")
     )
     @MapKeyColumn(name = "field_id")
     @Column(name = "value")
-    public Map<Long, String> body;
+    private Map<Long, String> body;
 }

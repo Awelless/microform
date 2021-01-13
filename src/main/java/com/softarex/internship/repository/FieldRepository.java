@@ -9,4 +9,7 @@ import java.util.List;
 public interface FieldRepository extends JpaRepository<Field, Long> {
     @Query("from Field f where f.active = true")
     List<Field> findActive();
+
+    @Query("from Field f where f.required = true")
+    List<Field> findRequired();
 }

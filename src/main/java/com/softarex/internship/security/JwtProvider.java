@@ -10,12 +10,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 @Component
 public class JwtProvider {
-    @Value("${jwt.header}")
+    @Value("${jwt.cookie}")
     private String jwtHeader;
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -24,10 +25,14 @@ public class JwtProvider {
 
     private final UserDetailsService userDetailsService;
 
-    public JwtProvider(UserDetailsService userDetailsService) {
+    public JwtProvider(UserDetailsServiceImpl userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 
+    /**
+     * @param username Subject of token
+     * @return The token
+     */
     public String createToken(@NonNull final String username) {
         Claims claims = Jwts.claims().setSubject(username);
         Date now = new Date();
@@ -41,6 +46,9 @@ public class JwtProvider {
                 .compact();
     }
 
+    /**
+     * @return Validity of the token
+     */
     public boolean isTokenValid(@NonNull final String token) {
 
         try {
@@ -54,17 +62,33 @@ public class JwtProvider {
         }
     }
 
+    /**
+     * @return Token from the request
+     */
     public String resolveToken(@NonNull final HttpServletRequest request) {
-        return request.getHeader(jwtHeader);
+        if (request.getCookies() == null) {
+            return null;
+        }
+
+        for (Cookie cookie : request.getCookies()) {
+            if (jwtHeader.equals(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+
+        return null;
     }
 
+    /**
+     * @return Authentication created with the token
+     */
     public Authentication getAuthentication(@NonNull final String token) {
         String username = getUsername(token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         return new UsernamePasswordAuthenticationToken(userDetails, "");
     }
 
-    public String getUsername(@NonNull final String token) {
+    private String getUsername(@NonNull final String token) {
         return Jwts.parser()
                 .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)

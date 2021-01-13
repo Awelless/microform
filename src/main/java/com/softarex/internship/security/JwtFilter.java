@@ -40,7 +40,11 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (AuthenticationException | JwtException e) {
+            //Clearing SecurityContext and cookies
             SecurityContextHolder.clearContext();
+            SecurityUtils.clearCookies(request, response);
+
+            //Sending 401 response
             sendErrorMessage(response, e.getMessage());
         }
     }

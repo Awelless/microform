@@ -14,13 +14,14 @@ public class WebSocketSender {
     private final ObjectMapper mapper;
     private final SimpMessagingTemplate template;
 
-    public void sendResponse(@NonNull final Response response) {
+    /**
+     * Converts and sends response to /topic/responses
+     * @param response Response which is sent
+     * @throws JsonProcessingException
+     */
+    public void sendResponse(@NonNull final Response response) throws JsonProcessingException {
         String value;
-        try {
-            value = mapper.writeValueAsString(response);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        value = mapper.writeValueAsString(response);
 
         template.convertAndSend("/topic/responses", value);
     }

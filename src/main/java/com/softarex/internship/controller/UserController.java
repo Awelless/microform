@@ -1,6 +1,7 @@
 package com.softarex.internship.controller;
 
 import com.softarex.internship.domain.User;
+import com.softarex.internship.domain.Validation;
 import com.softarex.internship.exception.UserNotUniqueException;
 import com.softarex.internship.security.AuthenticationService;
 import com.softarex.internship.service.UserService;
@@ -9,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -27,19 +30,27 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody User user) {
+    public ResponseEntity<?> createUser(
+            @Validated(Validation.Create.class) @RequestBody User user,
+            BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors()) {
+            return ControllerUtils.getErrorResponse(bindingResult);
+        }
+
         try {
             user = userService.create(user);
             return ResponseEntity.ok(user);
+
         } catch (UserNotUniqueException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
+            return ControllerUtils.getErrorResponse(e, HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
 
     @PutMapping
     public User updateProfile(
             @AuthenticationPrincipal User currentUser,
-            @RequestBody User newUser
+            @Validated(Validation.Edit.class) @RequestBody User newUser
     ) {
         return userService.update(currentUser, newUser);
     }
@@ -52,17 +63,23 @@ public class UserController {
             HttpServletResponse response
     ) {
         if (!userService.isPasswordCorrect(currentUser, oldPassword)) {
-            return new ResponseEntity<>("Invalid password", HttpStatus.UNAUTHORIZED);
+            return ControllerUtils.getErrorResponse("Invalid password", HttpStatus.UNAUTHORIZED);
         }
 
-        User user = userService.updatePassword(currentUser, newPassword);
+        User user;
 
         try {
-            authenticationService.authenticate(user, response);
+            user = userService.updatePassword(currentUser, newPassword);
+        } catch (IllegalArgumentException e) {
+            return ControllerUtils.getErrorResponse(e, HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+
+        try {
+            authenticationService.authenticate(user.getUsername(), user.getPassword(), response);
             return new ResponseEntity<>(HttpStatus.OK);
 
         } catch (AuthenticationException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+            return ControllerUtils.getErrorResponse(e, HttpStatus.UNAUTHORIZED);
         }
     }
 }

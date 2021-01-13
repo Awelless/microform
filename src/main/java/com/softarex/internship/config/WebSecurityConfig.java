@@ -3,6 +3,7 @@ package com.softarex.internship.config;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -26,8 +27,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .sessionCreationPolicy(SessionCreationPolicy.NEVER)
                     .and()
                 .authorizeRequests()
-                //TODO: secure endpoints
-                    .anyRequest().permitAll()
+                    .antMatchers(HttpMethod.POST, "/api/auth/login").anonymous()
+                    .antMatchers(HttpMethod.POST, "/api/user").anonymous()
+                    .antMatchers(HttpMethod.GET,  "/api/fields/active").permitAll()
+                    .antMatchers(HttpMethod.POST, "/api/responses").permitAll()
+                    .anyRequest().authenticated()
                     .and()
                 .apply(jwtConfig);
     }

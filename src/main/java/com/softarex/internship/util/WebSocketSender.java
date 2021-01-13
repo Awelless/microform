@@ -16,13 +16,9 @@ public class WebSocketSender {
 
     /**
      * Converts and sends response to /topic/responses
-     * @param response Response which is sent
-     * @throws JsonProcessingException
      */
     public void sendResponse(@NonNull final Response response) throws JsonProcessingException {
-        String value;
-        value = mapper.writeValueAsString(response);
-
+        String value = mapper.writeValueAsString(response);
         template.convertAndSend("/topic/responses", value);
     }
 }

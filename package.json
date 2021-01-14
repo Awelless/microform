@@ -1,0 +1,30 @@
+{
+  "name": "internship",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/Awelless/microform.git",
+  "author": "Awelless <hahaha.funny.yellow.dog@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "webpack serve"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.12.11",
+    "@stomp/stompjs": "^6.0.0",
+    "babel-loader": "^8.2.2",
+    "sockjs-client": "^1.5.0",
+    "vue": "^2.6.12",
+    "vue-loader": "^15.9.6",
+    "vue-resource": "^1.5.1",
+    "vue-router": "^3.4.9",
+    "vue-template-compiler": "^2.6.12",
+    "webpack": "^5.14.0",
+    "webpack-cli": "^4.3.1",
+    "webpack-dev-server": "^3.11.2"
+  },
+  "dependencies": {
+    "vuex": "^3.6.0"
+  }
+}

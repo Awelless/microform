@@ -84,7 +84,7 @@ public class User {
     private String lastName;
 
     @Pattern(
-            regexp  = "\\d{12}",
+            regexp  = "\\d*",
             message = "Phone number is invalid",
             groups  = Validation.Edit.class
     )

@@ -2,16 +2,18 @@ package com.softarex.internship.security;
 
 import com.softarex.internship.exception.JwtAuthenticationException;
 import io.jsonwebtoken.*;
-import org.springframework.lang.NonNull;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Base64;
 import java.util.Date;
 
 @Component
@@ -24,6 +26,11 @@ public class JwtProvider {
     private Integer jwtValidityTime;
 
     private final UserDetailsService userDetailsService;
+
+    @PostConstruct
+    protected void init() {
+        jwtSecret = Base64.getEncoder().encodeToString(jwtSecret.getBytes());
+    }
 
     public JwtProvider(UserDetailsServiceImpl userDetailsService) {
         this.userDetailsService = userDetailsService;
@@ -56,7 +63,7 @@ public class JwtProvider {
                     .setSigningKey(jwtSecret)
                     .parseClaimsJws(token);
 
-            return claims.getBody().getExpiration().before(new Date());
+            return !claims.getBody().getExpiration().before(new Date());
         } catch (JwtException e) {
             throw new JwtAuthenticationException("JWT is expired or invalid");
         }
@@ -85,7 +92,7 @@ public class JwtProvider {
     public Authentication getAuthentication(@NonNull final String token) {
         String username = getUsername(token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        return new UsernamePasswordAuthenticationToken(userDetails, "");
+        return new UsernamePasswordAuthenticationToken(userDetails, "", null);
     }
 
     private String getUsername(@NonNull final String token) {

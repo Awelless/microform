@@ -44,7 +44,7 @@ public class FieldController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateField(
-            @RequestParam("id") Field oldField,
+            @PathVariable("id") Field oldField,
             @Valid @RequestBody Field newField,
             BindingResult bindingResult
     ) {
@@ -62,7 +62,7 @@ public class FieldController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteField(@RequestParam("id") Field field) {
+    public void deleteField(@PathVariable("id") Field field) {
         fieldService.delete(field);
     }
 }

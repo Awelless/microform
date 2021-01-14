@@ -24,17 +24,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf()
                     .disable()
                 .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.NEVER)
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
                 .authorizeRequests()
-                    .antMatchers(HttpMethod.POST, "/api/auth/login").anonymous()
-                    .antMatchers(HttpMethod.POST, "/api/user").anonymous()
+                    .antMatchers(HttpMethod.POST, "/api/auth/login")   .anonymous()
+                    .antMatchers(HttpMethod.POST, "/api/users")        .anonymous()
                     .antMatchers(HttpMethod.GET,  "/api/fields/active").permitAll()
-                    .antMatchers(HttpMethod.POST, "/api/responses").permitAll()
-                    .anyRequest().authenticated()
+                    .antMatchers("/api/responses").permitAll()
+                    .antMatchers("/api/**")       .authenticated()
+                    .anyRequest().permitAll()
                     .and()
                 .apply(jwtConfig);
     }
+
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

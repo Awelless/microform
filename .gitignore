@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 documentation/raw
+node_modules
 
 ### IntelliJ IDEA ###
 .idea

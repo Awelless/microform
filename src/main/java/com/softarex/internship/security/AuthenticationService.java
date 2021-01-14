@@ -1,9 +1,11 @@
 package com.softarex.internship.security;
 
+import com.softarex.internship.domain.User;
+import com.softarex.internship.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.lang.NonNull;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Component;
 
@@ -14,16 +16,19 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 @AllArgsConstructor
 public class AuthenticationService {
-    private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
 
     /**
-     * Authenticates user with username and password and creates cookie with token
+     * Checks if username and password valid and creates cookie with token
      */
     public void authenticate(@NonNull final String username, @NonNull final String password, @NonNull HttpServletResponse response) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, password)
-        );
+        User user = userRepository.getByUsername(username);
+
+        if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
+            throw new BadCredentialsException("Username or password is invalid");
+        }
 
         String token = jwtProvider.createToken(username);
 

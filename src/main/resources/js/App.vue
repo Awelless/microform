@@ -6,7 +6,7 @@
 </template>
 
 <script>
-    import AppHeader from './components/AppHeader.vue'
+    import AppHeader from './components/Navbar.vue'
     import { connect, setHandler, disconnect } from './ws'
     import { mapActions, mapMutations } from 'vuex'
 

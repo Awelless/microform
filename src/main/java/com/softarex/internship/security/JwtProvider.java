@@ -37,11 +37,11 @@ public class JwtProvider {
     }
 
     /**
-     * @param username Subject of token
+     * @param email Subject of token
      * @return The token
      */
-    public String createToken(@NonNull final String username) {
-        Claims claims = Jwts.claims().setSubject(username);
+    public String createToken(@NonNull final String email) {
+        Claims claims = Jwts.claims().setSubject(email);
         Date now = new Date();
         Date validity = new Date(now.getTime() + jwtValidityTime);
 
@@ -90,12 +90,12 @@ public class JwtProvider {
      * @return Authentication created with the token
      */
     public Authentication getAuthentication(@NonNull final String token) {
-        String username = getUsername(token);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        String email = getEmail(token);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
         return new UsernamePasswordAuthenticationToken(userDetails, "", null);
     }
 
-    private String getUsername(@NonNull final String token) {
+    private String getEmail(@NonNull final String token) {
         return Jwts.parser()
                 .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)

@@ -21,12 +21,12 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(
-            @RequestParam String username,
+            @RequestParam String email,
             @RequestParam String password,
             HttpServletResponse response
     ) {
         try {
-            authenticationService.authenticate(username, password, response);
+            authenticationService.authenticate(email, password, response);
             return new ResponseEntity<>(HttpStatus.OK);
 
         } catch (AuthenticationException e) {

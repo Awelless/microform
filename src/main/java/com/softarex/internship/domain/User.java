@@ -18,7 +18,7 @@ import java.util.Collection;
 @Table(name = "usr")
 @Data
 @EqualsAndHashCode(of = "id")
-@ToString(of = { "id", "username" })
+@ToString(of = { "id", "email" })
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {
@@ -35,23 +35,6 @@ public class User implements UserDetails {
             groups  = Validation.Edit.class
     )
     private String email;
-
-    @NotBlank(
-            message = "Username shouldn't be blank",
-            groups  = Validation.Create.class
-    )
-    @Size(
-            min     = 2,
-            max     = 63,
-            message = "Username length should be from 2 to 63",
-            groups  = Validation.Create.class
-    )
-    @Pattern(
-            message = "Username should contain only letters of latin alphabet, numbers and '_' symbol",
-            regexp  = "^\\w{2,63}$",
-            groups  = Validation.Create.class
-    )
-    private String username;
 
     @JsonProperty(access = Access.WRITE_ONLY)
     @NotBlank(
@@ -91,6 +74,11 @@ public class User implements UserDetails {
             groups  = Validation.Edit.class
     )
     private String phoneNumber;
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
 
     @JsonIgnore
     @Override

@@ -1,23 +1,26 @@
 <template>
-    <div>
-        <table>
+    <table class="table">
+        <thead>
             <tr>
                 <th
                     v-for="field in fields"
                     :key="'field' + field.id"
+                    scope="col"
                 >
                     {{field.label}}
                 </th>
             </tr>
+        </thead>
 
+        <tbody>
             <response-row
                 v-for="response in sortedResponses"
                 :key="response.id"
                 :response-attr="response"
                 :fields="fields"
             />
-        </table>
-    </div>
+        </tbody>
+    </table>
 </template>
 
 <script>

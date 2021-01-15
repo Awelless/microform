@@ -1,20 +1,29 @@
 <template>
-    <div>
-        <h3>Log In</h3>
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+            <div class="text-center">
+                <h4>Log In</h4>
+            </div>
 
-        <div v-if="error">
-            Error: {{error}}
+            <div v-if="error" class="alert alert-danger" role="alert">
+                {{error}}
+            </div>
+
+            <div class="mb-3">
+                <input type="text" class="form-control" placeholder="Email" v-model="email" @keyup.enter="doLogIn">
+            </div>
+
+            <div class="mb-3">
+                <input type="password" class="form-control" placeholder="Password" v-model="password" @keyup.enter="doLogIn">
+            </div>
+
+            <div class="text-center">
+                <button class="btn btn-primary me-2" @click="doLogIn">Log In</button>
+                <router-link class="btn btn-light text-primary" to="/registration">Sign Up</router-link>
+            </div>
         </div>
-
-        <h6>Username</h6>
-        <input type="text" v-model="username" @keyup.enter="doLogIn">
-
-        <h6>Password</h6>
-        <input type="password" v-model="password" @keyup.enter="doLogIn">
-
-        <br>
-        <button @click="doLogIn">Log In</button>
-        <router-link to="/registration">Sign Up</router-link>
+        <div class="col-sm-4"></div>
     </div>
 </template>
 
@@ -25,7 +34,7 @@
         name: 'Login',
         data() {
             return {
-                username: '',
+                email: '',
                 password: '',
                 error: null
             }
@@ -37,7 +46,7 @@
                     return
                 }
 
-                this.$http.post('/api/auth/login', {}, { params: {username: this.username, password: this.password}}).then(response => {
+                this.$http.post('/api/auth/login', {}, { params: {email: this.email, password: this.password}}).then(response => {
                     this.initFieldsAction()
                     this.initPrincipalAction()
                     this.$router.push('/')

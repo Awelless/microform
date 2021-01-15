@@ -21,16 +21,16 @@ public class AuthenticationService {
     private final JwtProvider jwtProvider;
 
     /**
-     * Checks if username and password valid and creates cookie with token
+     * Checks if email and password valid and creates cookie with token
      */
-    public void authenticate(@NonNull final String username, @NonNull final String password, @NonNull HttpServletResponse response) {
-        User user = userRepository.findByUsername(username);
+    public void authenticate(@NonNull final String email, @NonNull final String password, @NonNull HttpServletResponse response) {
+        User user = userRepository.findByEmail(email);
 
         if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
-            throw new BadCredentialsException("Username or password is invalid");
+            throw new BadCredentialsException("Email or password is invalid");
         }
 
-        String token = jwtProvider.createToken(username);
+        String token = jwtProvider.createToken(email);
 
         Cookie authCookie = new Cookie("Authorization", token);
         authCookie.setPath("/");

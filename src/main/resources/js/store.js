@@ -92,10 +92,12 @@ export default new Vuex.Store({
             commit('addResponseMutation', data)
         },
         async initPrincipalAction({commit}) {
-            const response = await usersApi.getMyProfile()
-            const data     = await response.json()
+            try {
+                const response = await usersApi.getMyProfile()
+                const data     = await response.json()
 
-            commit('updatePrincipalMutation', data)
+                commit('updatePrincipalMutation', data)
+            } catch (error) {}
         },
         async updatePrincipalAction({commit}, principal) {
             const response = await usersApi.update(principal)

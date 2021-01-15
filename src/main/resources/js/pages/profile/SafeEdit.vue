@@ -3,7 +3,11 @@
         <div class="col-sm-4"></div>
         <div class="col-sm-4">
             <div class="text-center">
-                <h4>Sign Up</h4>
+                <h4>Edit Profile</h4>
+            </div>
+
+            <div v-if="success" class="alert alert-success">
+                {{success}}
             </div>
 
             <div class="mb-3 input-group has-validation">
@@ -18,36 +22,6 @@
                 <span class="input-group-text text-danger bg-light">*</span>
                 <div v-if="errors.has('email')" class="invalid-feedback" id="emailFeedback">
                     {{errors.get('email')}}
-                </div>
-            </div>
-
-            <div class="mb-3 input-group has-validation">
-                <input
-                    type="password"
-                    :class="errors.has('password') ? 'form-control is-invalid' : 'form-control'"
-                    placeholder="Password"
-                    aria-describedby="passwordFeedback"
-                    v-model="password"
-                    @keyup.enter="save"
-                >
-                <span class="input-group-text text-danger bg-light">*</span>
-                <div v-if="errors.has('password')" class="invalid-feedback" id="passwordFeedback">
-                    {{errors.get('password')}}
-                </div>
-            </div>
-
-            <div class="mb-3 input-group has-validation">
-                <input
-                    type="password"
-                    :class="errors.has('confirm') ? 'form-control is-invalid' : 'form-control'"
-                    placeholder="Confirm Password"
-                    aria-describedby="confirmFeedback"
-                    v-model="confirmPassword"
-                    @keyup.enter="save"
-                >
-                <span class="input-group-text text-danger bg-light">*</span>
-                <div v-if="errors.has('confirm')" class="invalid-feedback" id="confirmFeedback">
-                    {{errors.get('confirm')}}
                 </div>
             </div>
 
@@ -95,8 +69,8 @@
             </div>
 
             <div class="text-center">
-                <button class="btn btn-primary me-2" @click="save">Sign Up</button>
-                <router-link class="btn btn-light text-primary" to="/login">Log In</router-link>
+                <button class="btn btn-primary" @click="save">Save</button>
+                <button class="btn btn-light" @click="init(principal)">Reset</button>
             </div>
         </div>
         <div class="col-sm-4"></div>
@@ -104,48 +78,31 @@
 </template>
 
 <script>
-    import usersApi from '../api/users'
+    import {mapActions, mapGetters} from 'vuex'
 
     export default {
-        name: 'Registration',
+        name: 'SafeEdit',
+        props: ['changeComponent'],
         data() {
             return {
                 email: '',
-                password: '',
-                confirmPassword: '',
                 firstName: '',
                 lastName: '',
                 phoneNumber: '',
-                errors: new Map
+                errors: new Map,
+                success: null
+            }
+        },
+        computed: mapGetters(['principal']),
+        watch: {
+            principal(newVal, oldVal) {
+                this.init(newVal)
             }
         },
         methods: {
+            ...mapActions(['updatePrincipalAction']),
             isValid() {
                 this.errors = new Map
-
-                if (!this.email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
-                    this.errors.set('email', `Email is invalid`)
-                }
-
-                if (this.email.length === 0) {
-                    this.errors.set('email', `Email is necessary`)
-                }
-
-                if (this.password.length < 6 || this.password.length > 255) {
-                    this.errors.set('password', 'Password length should be from 6 to 255')
-                }
-
-                if (this.password.length === 0) {
-                    this.errors.set('password', `Password shouldn't be empty`)
-                }
-
-                if (!this.password.match(/\w+/) && !this.errors.has('password')) {
-                    this.errors.set('password', `Password should contain only letters of latin alphabet, numbers and '_' symbol`)
-                }
-
-                if (this.password !== this.confirmPassword) {
-                    this.errors.set('confirm', 'Passwords are not equal')
-                }
 
                 if (this.firstName.length > 255) {
                     this.errors.set('firstName', `First Name length shouldn't be longer than 255`)
@@ -153,6 +110,14 @@
 
                 if (this.lastName.length > 255) {
                     this.errors.set('lastName', `Last Name length shouldn't be longer than 255`)
+                }
+
+                if (!this.email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
+                    this.errors.set('email', `Email is invalid`)
+                }
+
+                if (this.email.length === 0) {
+                    this.errors.set('email', `Email is necessary`)
                 }
 
                 if (this.phoneNumber.length > 0 && !this.phoneNumber.match(/\d{12}/)) {
@@ -163,38 +128,33 @@
             },
             save() {
                 if (!this.isValid()) {
-                    this.password = ''
-                    this.confirmPassword = ''
+                    console.log(this.errors)
                     return
                 }
 
-                const user = {
-                    email:       this.email,
-                    username:    this.username,
-                    password:    this.password,
-                    firstName:   this.firstName,
-                    lastName:    this.lastName,
-                    phoneNumber: this.phoneNumber,
+                const newUser = {
+                    firstName: this.firstName,
+                    lastName: this.lastName,
+                    email: this.email,
+                    phoneNumber: this.phoneNumber
                 }
 
-                usersApi.save(user).then(response => {
-                    this.$router.push('/login')
-                }, response => {
-                    //email isn't unique
-                    response.json().then(data => {
-                        this.errors.set('email', data.error)
-                    })
+                this.updatePrincipalAction(newUser)
 
-                    this.password = ''
-                    this.confirmPassword = ''
+                this.success = 'Profile is updated'
 
-                    console.log(this.errors)
-                })
+                this.init(newUser)
+            },
+            init(principal) {
+                this.firstName = principal.firstName
+                this.lastName = principal.lastName
+                this.email = principal.email
+                this.phoneNumber = principal.phoneNumber
             }
         },
         created() {
-            if (this.$store.state.principal !== null) {
-                this.$router.push('/')
+            if (this.principal !== null) {
+                this.init(this.principal)
             }
         }
     }

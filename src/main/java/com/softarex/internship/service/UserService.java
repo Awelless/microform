@@ -28,9 +28,6 @@ public class UserService {
      * @return Created user from DB
      */
     public User create(@NonNull final User user) {
-        if (userRepository.findByUsername(user.getUsername()) != null) {
-            throw new UserNotUniqueException("Username is already taken");
-        }
         if (userRepository.findByEmail(user.getEmail()) != null) {
             throw new UserNotUniqueException("Email is already taken");
         }
@@ -45,13 +42,13 @@ public class UserService {
     }
 
     /**
-     * Updates all properties of user excluding username and password
+     * Updates all properties of user excluding password
      * @param user The User who is updated
      * @param newUser new version of the user
      * @return Updated user from DB
      */
     public User update(@NonNull User user, @NonNull final User newUser) {
-        BeanUtils.copyProperties(newUser, user, "id", "username", "password");
+        BeanUtils.copyProperties(newUser, user, "id", "password");
         return userRepository.save(user);
     }
 

@@ -41,7 +41,8 @@
                 type: 'SINGLE_LINE_TEXT',
                 required: false,
                 active: true,
-                fieldOptionsText: ''
+                fieldOptionsText: '',
+                errors: new Map
             }
         },
         watch: {
@@ -51,8 +52,30 @@
         },
         methods: {
             ...mapActions(['addFieldAction', 'updateFieldAction']),
+            isValid() {
+                this.errors = new Map
+
+                if (this.label.length === 0) {
+                    this.errors.set('label', `Label shouldn't be empty`)
+                }
+
+                if (this.label.length > 255) {
+                    this.errors.set('label', `Label length shouldn't be longer than 255`)
+                }
+
+                if ((this.type === 'RADIO_BUTTON' || this.type === 'COMBOBOX') &&
+                    options.length === 0) {
+                    this.errors.set('options', `You should set at least 1 option`)
+                }
+
+                return this.errors.size === 0
+            },
             save() {
-                const options = this.fieldOptionsText.match(/(\w| |,|:|\+|.)+/g) || []
+                const options = this.fieldOptionsText.match(/(\w| |,|:|\+)+/g) || []
+
+                if (!this.isValid()) {
+                    return
+                }
 
                 const fieldToSend = {
                     id: this.id,

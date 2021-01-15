@@ -48,7 +48,7 @@ public class FieldService {
      */
     public Field update(@NonNull Field field, @NonNull final Field newField) {
         if (isInvalid(newField)) {
-            throw new IllegalArgumentException("You should choose at least 1 option");
+            throw new IllegalArgumentException("You should set at least 1 option");
         }
 
         BeanUtils.copyProperties(newField, field, "id", "options");

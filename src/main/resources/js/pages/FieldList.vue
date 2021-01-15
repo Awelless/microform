@@ -57,6 +57,9 @@
             }
         },
         created() {
+            if (this.$store.state.principal === null) {
+                this.$router.push('/')
+            }
             this.initFieldsAction()
         }
     }

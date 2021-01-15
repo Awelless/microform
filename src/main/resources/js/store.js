@@ -3,17 +3,20 @@ import Vuex from 'vuex'
 
 import fieldsApi from './api/fields'
 import responsesApi from './api/responses'
+import usersApi from './api/users'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
         fields: [],
-        responses: []
+        responses: [],
+        principal: null
     },
     getters: {
         sortedFields: state => (state.fields).sort((a, b) => b.id - a.id),
-        sortedResponses: state => (state.responses).sort((a, b) => b.id - a.id)
+        sortedResponses: state => (state.responses).sort((a, b) => b.id - a.id),
+        principal: state => state.principal
     },
     mutations: {
         initFieldsMutation(state, fields) {
@@ -38,6 +41,12 @@ export default new Vuex.Store({
         },
         addResponseMutation(state, response) {
             state.responses.push(response)
+        },
+        updatePrincipalMutation(state, principal) {
+            state.principal = principal
+        },
+        removePrincipalMutation(state) {
+            state.principal = null
         }
     },
     actions: {
@@ -81,6 +90,18 @@ export default new Vuex.Store({
             }
 
             commit('addResponseMutation', data)
+        },
+        async initPrincipalAction({commit}) {
+            const response = await usersApi.getMyProfile()
+            const data     = await response.json()
+
+            commit('updatePrincipalMutation', data)
+        },
+        async updatePrincipalAction({commit}, principal) {
+            const response = await usersApi.update(principal)
+            const data     = await response.json()
+
+            commit('updatePrincipalMutation', data)
         }
     }
 })

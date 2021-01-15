@@ -7,24 +7,24 @@
         <template
             v-for="(field, i) in fields"
         >
-            <h6>{{field.label}}</h6>
+            <label :for="fields.id + '#' + i">{{field.label}}</label>
 
-            <input v-if="field.type === 'SINGLE_LINE_TEXT'" type="text" v-model="responseFields[i]">
+            <input v-if="field.type === 'SINGLE_LINE_TEXT'" type="text" :id="fields.id + '#' + i" v-model="responseFields[i]">
 
-            <textarea v-else-if="field.type === 'MULTILINE_TEXT'" v-model="responseFields[i]" />
+            <textarea v-else-if="field.type === 'MULTILINE_TEXT'" :id="fields.id + '#' + i" v-model="responseFields[i]" />
 
-            <template v-else-if="field.type === 'RADIO_BUTTON'">
+            <template v-else-if="field.type === 'RADIO_BUTTON'" :id="fields.id + '#' + i">
                 <template
                     v-for="option in field.options"
                 >
-                    <input type="radio" :id="field.id + '#' +option" name="gender" :value="option" v-model="responseFields[i]">
                     <label :for="field.id + '#' +option">{{ option }}</label><br>
+                    <input type="radio" :id="field.id + '#' +option" name="gender" :value="option" v-model="responseFields[i]">
                 </template>
             </template>
 
-            <input v-else-if="field.type === 'CHECKBOX'" type="checkbox" v-model="responseFields[i]">
+            <input v-else-if="field.type === 'CHECKBOX'" type="checkbox" :id="fields.id + '#' + i" v-model="responseFields[i]">
 
-            <select v-else-if="field.type === 'COMBOBOX'" v-model="responseFields[i]">
+            <select v-else-if="field.type === 'COMBOBOX'" :id="fields.id + '#' + i" v-model="responseFields[i]">
                 <option
                     v-for="option in field.options"
                     :key="field.id + '#' + option"
@@ -33,7 +33,7 @@
                 </option>
             </select>
 
-            <input v-else type="date" v-model="responseFields[i]">
+            <input v-else type="date" :id="fields.id + '#' + i" v-model="responseFields[i]">
 
         </template>
 
@@ -45,7 +45,7 @@
 <script>
     import fieldsApi from '../api/fields'
     import {mapActions} from 'vuex'
-    import ResponseSuccess from '../components/ResponseSuccess.vue'
+    import ResponseSuccess from '../components/response/ResponseSuccess.vue'
 
     export default {
         name: 'ResponseForm',

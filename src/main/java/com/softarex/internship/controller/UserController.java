@@ -25,6 +25,10 @@ public class UserController {
 
     @GetMapping
     public User getMyProfile(@AuthenticationPrincipal User currentUser) {
+        if (currentUser == null) {
+            return null;
+        }
+
         //@AuthenticationPrincipal can store old data
         return userService.getById(currentUser.getId());
     }
@@ -75,7 +79,7 @@ public class UserController {
         }
 
         try {
-            authenticationService.authenticate(user.getUsername(), user.getPassword(), response);
+            authenticationService.authenticate(user.getUsername(), newPassword, response);
             return new ResponseEntity<>(HttpStatus.OK);
 
         } catch (AuthenticationException e) {

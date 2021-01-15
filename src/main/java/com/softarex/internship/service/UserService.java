@@ -19,7 +19,7 @@ public class UserService {
     private final MailSender mailSender;
 
     public User getById(@NonNull final Long id) {
-        return userRepository.getOne(id);
+        return userRepository.findById(id).orElse(null);
     }
 
     /**
@@ -28,10 +28,10 @@ public class UserService {
      * @return Created user from DB
      */
     public User create(@NonNull final User user) {
-        if (userRepository.getByUsername(user.getUsername()) != null) {
+        if (userRepository.findByUsername(user.getUsername()) != null) {
             throw new UserNotUniqueException("Username is already taken");
         }
-        if (userRepository.getByEmail(user.getEmail()) != null) {
+        if (userRepository.findByEmail(user.getEmail()) != null) {
             throw new UserNotUniqueException("Email is already taken");
         }
 

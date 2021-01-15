@@ -32,14 +32,14 @@ public class ControllerUtils {
 
     public static ResponseEntity<?> getErrorResponse(@NonNull final Exception e, @NonNull final HttpStatus status) {
         return new ResponseEntity<>(
-                Collections.singletonMap("error", Collections.singletonMap("error", e.getMessage())),
+                Collections.singletonMap("error", e.getMessage()),
                 status
         );
     }
 
     public static ResponseEntity<?> getErrorResponse(@NonNull final String error, @NonNull final HttpStatus status) {
         return new ResponseEntity<>(
-                Collections.singletonMap("error", Collections.singletonMap("error", error)),
+                Collections.singletonMap("error", error),
                 status
         );
     }

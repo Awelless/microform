@@ -1,9 +1,6 @@
 package com.softarex.internship.domain.field;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -14,6 +11,7 @@ import java.util.Set;
 @Entity
 @Data
 @EqualsAndHashCode(of = "id")
+@ToString(of = { "id", "label" })
 @NoArgsConstructor
 @AllArgsConstructor
 public class Field {

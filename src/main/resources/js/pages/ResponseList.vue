@@ -22,7 +22,7 @@
 
 <script>
     import fieldsApi from '../api/fields'
-    import ResponseRow from '../components/ResponseRow.vue'
+    import ResponseRow from '../components/response/ResponseRow.vue'
     import { mapGetters } from 'vuex'
 
     export default {
@@ -35,7 +35,7 @@
         },
         computed: mapGetters(['sortedResponses']),
         async created() {
-            const response = await fieldsApi.getActive()
+            const response = await fieldsApi.getAll()
             const data     = await response.json()
             this.fields    = data.sort((a, b) => a.id - b.id)
         }

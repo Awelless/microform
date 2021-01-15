@@ -27,5 +27,7 @@
 </script>
 
 <style scoped>
-
+  td {
+    white-space:pre-line;
+  }
 </style>

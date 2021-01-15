@@ -31,7 +31,7 @@
             }
         },
         methods: {
-            ...mapActions(['initFieldsAction']),
+            ...mapActions(['initFieldsAction', 'initPrincipalAction']),
             async doLogIn() {
                 if (this.username === '' || this.password === '') {
                     return
@@ -39,12 +39,19 @@
 
                 this.$http.post('/api/auth/login', {}, { params: {username: this.username, password: this.password}}).then(response => {
                     this.initFieldsAction()
+                    this.initPrincipalAction()
                     this.$router.push('/')
                 }, response => {
                     response.json().then(data => {
                         this.error = data.error
                     })
+                    this.password = ''
                 })
+            }
+        },
+        created() {
+            if (this.$store.state.principal !== null) {
+                this.$router.push('/')
             }
         }
     }

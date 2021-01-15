@@ -1,25 +1,27 @@
 package com.softarex.internship.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.Collection;
 
 @Entity
 @Table(name = "usr")
 @Data
 @EqualsAndHashCode(of = "id")
+@ToString(of = { "id", "username" })
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -46,7 +48,7 @@ public class User {
     )
     @Pattern(
             message = "Username should contain only letters of latin alphabet, numbers and '_' symbol",
-            regexp  = "\\w+",
+            regexp  = "^\\w{2,63}$",
             groups  = Validation.Create.class
     )
     private String username;
@@ -63,7 +65,7 @@ public class User {
             groups  = Validation.Create.class
     )
     @Pattern(
-            regexp  = "\\w+",
+            regexp  = "^\\w{6,255}$",
             message = "Password should contain only letters of latin alphabet, numbers and '_' symbol",
             groups  = Validation.Create.class
     )
@@ -84,9 +86,39 @@ public class User {
     private String lastName;
 
     @Pattern(
-            regexp  = "\\d*",
+            regexp  = "^(\\d{12}|)$",
             message = "Phone number is invalid",
             groups  = Validation.Edit.class
     )
     private String phoneNumber;
+
+    @JsonIgnore
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

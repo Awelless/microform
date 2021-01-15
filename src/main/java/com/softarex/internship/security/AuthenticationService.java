@@ -24,7 +24,7 @@ public class AuthenticationService {
      * Checks if username and password valid and creates cookie with token
      */
     public void authenticate(@NonNull final String username, @NonNull final String password, @NonNull HttpServletResponse response) {
-        User user = userRepository.getByUsername(username);
+        User user = userRepository.findByUsername(username);
 
         if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
             throw new BadCredentialsException("Username or password is invalid");

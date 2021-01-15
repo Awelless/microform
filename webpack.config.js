@@ -28,6 +28,10 @@ module.exports = {
             {
                 test: /\.vue$/,
                 loader: 'vue-loader'
+            },
+            {
+                test: /\.css$/i,
+                use: ["style-loader", "css-loader"],
             }
         ]
     },

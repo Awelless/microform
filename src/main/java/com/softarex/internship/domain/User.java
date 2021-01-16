@@ -28,11 +28,11 @@ public class User implements UserDetails {
 
     @NotBlank(
             message = "Email shouldn't be blank",
-            groups  = Validation.Edit.class
+            groups  = Validation.Create.class
     )
     @Email(
             message = "Email is invalid",
-            groups  = Validation.Edit.class
+            groups  = Validation.Create.class
     )
     private String email;
 

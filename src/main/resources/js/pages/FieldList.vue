@@ -12,11 +12,14 @@
                     </div>
                 </div>
 
+                <div v-if="successMessage" class="alert alert-success mt-2">
+                    {{successMessage}}
+                </div>
+
                 <field-form
                     v-if="isFieldFormShown"
                     :field="field"
-                    :is-shown="isFieldFormShown"
-                    :change-status="fieldFormChangeStatus"
+                    :success="success"
                 />
 
                 <table class="table">
@@ -54,7 +57,8 @@
         data() {
             return {
                 field: null,
-                isFieldFormShown: false
+                isFieldFormShown: false,
+                successMessage: null
             }
         },
         computed: mapGetters(['sortedFields']),
@@ -63,13 +67,25 @@
             fieldFormChangeStatus() {
                 if (this.isFieldFormShown === true) {
                     this.field = null
+                } else {
+                    this.successMessage = null
                 }
 
                 this.isFieldFormShown = !this.isFieldFormShown
             },
             editField(field) {
+                this.successMessage = null
+
                 this.isFieldFormShown = true
                 this.field = field
+            },
+            success() {
+                console.log('success')
+
+                this.successMessage = 'Field is saved'
+                this.fieldFormChangeStatus()
+
+                console.log(this.successMessage)
             }
         },
         created() {

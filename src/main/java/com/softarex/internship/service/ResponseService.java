@@ -50,7 +50,7 @@ public class ResponseService {
         Map<Long, String> responseBody = response.getBody();
 
         responseBody.forEach((fieldId, value) -> {
-                if (fields.contains(new Field(fieldId))) {
+                if (!fields.contains(new Field(fieldId))) {
                     throw new IllegalArgumentException("One of fields is invalid");
                 }
             });

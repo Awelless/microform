@@ -128,8 +128,8 @@
 
 <script>
     import fieldsApi from '../api/fields'
-    import {mapActions} from 'vuex'
     import ResponseSuccess from '../components/response/ResponseSuccess.vue'
+    import {mapActions} from 'vuex'
 
     export default {
         name: 'ResponseForm',
@@ -166,15 +166,20 @@
                     body: Object.fromEntries(responseBody)
                 }
 
-                this.addResponseAction(response)
-
                 this.isSent = true
 
-                this.responseFields.fill('')
+                this.addResponseAction(response)
+
+                this.reset()
             },
             reset() {
+                this.errors = new Map
+
                 for (let i = 0; i < this.responseFields.length; ++i) {
                     this.responseFields.splice(i, 1, '')
+                    if (this.fields[i].type === 'CHECKBOX') {
+                        this.responseFields[i] = false
+                    }
                 }
             },
             submitOneMoreResponse() {
@@ -186,7 +191,12 @@
             const data     = await response.json()
             this.fields    = data.sort((a, b) => a.id - b.id)
 
-            this.fields.forEach(item => this.responseFields.push(''))
+            this.fields.forEach((item, i) => {
+                this.responseFields.push('')
+                if (this.fields[i].type === 'CHECKBOX') {
+                    this.responseFields[i] = false
+                }
+            })
         }
     }
 </script>

@@ -85,7 +85,7 @@
 
     export default {
         name: 'FieldForm',
-        props: ['field', 'changeStatus'],
+        props: ['field', 'success'],
         data () {
             return {
                 id: null,
@@ -123,7 +123,12 @@
                 return this.errors.size === 0
             },
             save() {
-                const options = this.fieldOptionsText.match(/(\w| |,|:|\+)+/g) || []
+                const options = this.fieldOptionsText.match(/(\w| |,|:|\+|=|<|>|\$|%|&|\*|\/|\\|-)+/g) || []
+                options.forEach((option, i) => {
+                    if (option.length === 0 || !option.trim()) {
+                        options.splice(i, 1)
+                    }
+                })
 
                 if (!this.isValid(options)) {
                     return
@@ -145,6 +150,7 @@
                 }
 
                 this.clear()
+                this.success()
             },
             clear() {
                 this.id       = null

@@ -35,11 +35,7 @@ public class MailSender {
      */
     public void sendActivationMessage(@NonNull final User user) {
         String subject = "Account is created";
-        String message = String.format(
-                "Hello, %s!\n" +
-                "You've created account on MicroForm",
-                user.getUsername()
-        );
+        String message = "Hello!\n You've just created account on MicroForm";
 
         send(user.getEmail(), subject, message);
     }
@@ -50,11 +46,7 @@ public class MailSender {
      */
     public void sendPasswordChangeMessage(@NonNull final User user) {
         String subject = "Password is changed";
-        String message = String.format(
-                "Hello, %s!\n" +
-                "You've changed password on MicroForm",
-                user.getUsername()
-        );
+        String message = "Hello!\n You've changed password on MicroForm";
 
         send(user.getEmail(), subject, message);
     }

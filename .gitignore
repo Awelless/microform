@@ -13,3 +13,4 @@ src/main/resources/static/js
 *.iws
 *.iml
 *.ipr
+/node/

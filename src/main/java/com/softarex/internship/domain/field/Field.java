@@ -5,8 +5,9 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Data
@@ -40,9 +41,15 @@ public class Field {
     @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "field_option", joinColumns = @JoinColumn(name = "field_id"))
     @Column(name = "option")
-    private Set<String> options = new HashSet<>();
+    private List<String> options = new ArrayList<>();
 
-    public void setOptions(final Set<String> options) {
-        this.options = new HashSet<>(options);
+    public Field(@NonNull final Long id) {
+        this();
+
+        this.id = id;
+    }
+
+    public void setOptions(final Collection<String> options) {
+        this.options = new ArrayList<>(options);
     }
 }

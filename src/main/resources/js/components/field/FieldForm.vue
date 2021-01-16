@@ -1,30 +1,82 @@
 <template>
-    <div>
-        <label for="label">Label</label>
-        <input type="text" id="label" v-model="label">
+    <div class="row mb-5">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4">
+            <h5>Add Field</h5>
 
-        <label for="type">Type</label>
-        <select id="type" v-model="type">
-            <option value="SINGLE_LINE_TEXT">Single Line Text</option>
-            <option value="MULTILINE_TEXT">MultiLine Text</option>
-            <option value="RADIO_BUTTON">Radio Button</option>
-            <option value="CHECKBOX">Checkbox</option>
-            <option value="COMBOBOX">Combobox</option>
-            <option value="DATE">Date</option>
-        </select>
+            <div class="mb-3">
+                <label for="label" class="form-label">
+                    Label
+                    <span class="text-danger">
+                        *
+                    </span>
+                </label>
+                <input
+                    type="text"
+                    :class="errors.has('label') ? 'form-control is-invalid' : 'form-control'"
+                    aria-describedby="labelFeedback"
+                    id="label"
+                    v-model="label"
+                >
+                <div v-if="errors.has('label')" class="invalid-feedback" id="labelFeedback">
+                    {{errors.get('label')}}
+                </div>
+            </div>
 
-        <template v-if="type === 'RADIO_BUTTON' || type === 'COMBOBOX'">
-            <label for="options">Options</label>
-            <textarea id="options" v-model="fieldOptionsText"></textarea>
-        </template>
+            <div class="mb-3">
+                <label for="type" class="form-label">
+                    Type
+                </label>
+                <select
+                    class="form-select"
+                    id="type"
+                    v-model="type"
+                >
+                    <option value="SINGLE_LINE_TEXT">Single Line Text</option>
+                    <option value="MULTILINE_TEXT">MultiLine Text</option>
+                    <option value="RADIO_BUTTON">Radio Button</option>
+                    <option value="CHECKBOX">Checkbox</option>
+                    <option value="COMBOBOX">Combobox</option>
+                    <option value="DATE">Date</option>
+                </select>
+            </div>
 
-        <label for="required">Required</label>
-        <input type="checkbox" id="required" v-model="required">
+            <div class="mb-3" v-if="type === 'RADIO_BUTTON' || type === 'COMBOBOX'">
+                <label for="options" class="form-label">
+                    Options
+                    <span class="text-danger">
+                        *
+                    </span>
+                </label>
+                <textarea
+                    id="options"
+                    :class="errors.has('options') ? 'form-control is-invalid' : 'form-control'"
+                    aria-describedby="optionsFeedback"
+                    v-model="fieldOptionsText"
+                ></textarea>
+                <div v-if="errors.has('options')" class="invalid-feedback" id="optionsFeedback">
+                    {{errors.get('options')}}
+                </div>
+            </div>
 
-        <label for="isActive">Is Active</label>
-        <input type="checkbox" id="isActive" v-model="active">
+            <div class="row mb-3">
+                <div class="col">
+                    <input type="checkbox" class="form-check-input" id="required" v-model="required">
+                    <label for="required" class="form-check-label">Required</label>
+                </div>
 
-        <button @click="save">Save</button>
+                <div class="col">
+                    <input type="checkbox" class="form-check-input" id="isActive" v-model="active">
+                    <label for="isActive" class="form-check-label">Is Active</label>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button class="btn btn-primary me-2" @click="save">Save</button>
+                <button class="btn btn-light" @click="init(field)">Reset</button>
+            </div>
+        </div>
+        <div class="col-sm-4"></div>
     </div>
 </template>
 
@@ -33,7 +85,7 @@
 
     export default {
         name: 'FieldForm',
-        props: ['field'],
+        props: ['field', 'changeStatus'],
         data () {
             return {
                 id: null,
@@ -47,12 +99,12 @@
         },
         watch: {
             field(newVal, oldVal) {
-                this.updateFields(newVal)
+                this.init(newVal)
             }
         },
         methods: {
             ...mapActions(['addFieldAction', 'updateFieldAction']),
-            isValid() {
+            isValid(options) {
                 this.errors = new Map
 
                 if (this.label.length === 0) {
@@ -73,7 +125,7 @@
             save() {
                 const options = this.fieldOptionsText.match(/(\w| |,|:|\+)+/g) || []
 
-                if (!this.isValid()) {
+                if (!this.isValid(options)) {
                     return
                 }
 
@@ -94,7 +146,16 @@
 
                 this.clear()
             },
-            updateFields(newField) {
+            clear() {
+                this.id       = null
+                this.label    = ''
+                this.type     = 'SINGLE_LINE_TEXT'
+                this.required = false
+                this.active   = true
+
+                this.fieldOptionsText = ''
+            },
+            init(newField) {
                 if (newField) {
                     this.id       = newField.id
                     this.label    = newField.label
@@ -105,20 +166,13 @@
                     if (newField.options) {
                         this.fieldOptionsText = newField.options.join('\n')
                     }
+                } else {
+                    this.clear()
                 }
-            },
-            clear() {
-                this.id       = null
-                this.label    = ''
-                this.type     = 'SINGLE_LINE_TEXT'
-                this.required = false
-                this.active   = true
-
-                this.fieldOptionsText = ''
             }
         },
         created() {
-            this.updateFields(this.field)
+            this.init(this.field)
         }
     }
 </script>

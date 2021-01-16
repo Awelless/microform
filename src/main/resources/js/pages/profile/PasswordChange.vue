@@ -1,10 +1,8 @@
 <template>
-    <div class="row">
+    <div class="row mt-4 mb-3">
         <div class="col-sm-4"></div>
         <div class="col-sm-4">
-            <div class="text-center">
-                <h4>Sign Up</h4>
-            </div>
+            <h4 class="text-center">Change Password</h4>
 
             <div v-if="success" class="alert alert-success">
                 {{success}}

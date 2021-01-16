@@ -42,13 +42,13 @@ public class UserService {
     }
 
     /**
-     * Updates all properties of user excluding password
+     * Updates all properties of user excluding email and password
      * @param user The User who is updated
      * @param newUser new version of the user
      * @return Updated user from DB
      */
     public User update(@NonNull User user, @NonNull final User newUser) {
-        BeanUtils.copyProperties(newUser, user, "id", "password");
+        BeanUtils.copyProperties(newUser, user, "id", "email", "password");
         return userRepository.save(user);
     }
 

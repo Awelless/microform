@@ -1,28 +1,23 @@
 <template>
-    <div class="row">
+    <div class="row mt-4 mb-3">
         <div class="col-sm-4"></div>
         <div class="col-sm-4">
-            <div class="text-center">
-                <h4>Edit Profile</h4>
-            </div>
+            <h4 class="text-center">Edit Profile</h4>
 
             <div v-if="success" class="alert alert-success">
                 {{success}}
             </div>
 
-            <div class="mb-3 input-group has-validation">
+            <div class="mb-3">
                 <input
                     type="text"
-                    :class="errors.has('email') ? 'form-control is-invalid' : 'form-control'"
+                    class="form-control"
                     placeholder="Email"
                     v-model="email"
                     aria-describedby="emailFeedback"
                     @keyup.enter="save"
+                    disabled
                 >
-                <span class="input-group-text text-danger bg-light">*</span>
-                <div v-if="errors.has('email')" class="invalid-feedback" id="emailFeedback">
-                    {{errors.get('email')}}
-                </div>
             </div>
 
             <div class="mb-3">
@@ -69,7 +64,7 @@
             </div>
 
             <div class="text-center">
-                <button class="btn btn-primary" @click="save">Save</button>
+                <button class="btn btn-primary me-2" @click="save">Save</button>
                 <button class="btn btn-light" @click="init(principal)">Reset</button>
             </div>
         </div>
@@ -135,7 +130,6 @@
                 const newUser = {
                     firstName: this.firstName,
                     lastName: this.lastName,
-                    email: this.email,
                     phoneNumber: this.phoneNumber
                 }
 

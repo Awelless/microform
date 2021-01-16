@@ -11,8 +11,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -44,8 +46,14 @@ public class ResponseService {
     }
 
     private boolean isInvalid(@NonNull final Response response) {
-        List<Field> fields = fieldRepository.findAll();
+        Set<Field> fields = new HashSet<>(fieldRepository.findAll());
         Map<Long, String> responseBody = response.getBody();
+
+        responseBody.forEach((fieldId, value) -> {
+                if (fields.contains(new Field(fieldId))) {
+                    throw new IllegalArgumentException("One of fields is invalid");
+                }
+            });
 
         fields.forEach(field -> {
                     //Check on required fields

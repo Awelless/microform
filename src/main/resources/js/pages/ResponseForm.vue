@@ -1,12 +1,12 @@
 <template>
-    <div class="row">
+    <div class="row mt-4 mb-3">
         <div class="col-sm-4"></div>
         <div class="col-sm-4">
             <response-success
                 v-if="isSent"
                 :submit-one-more-response="submitOneMoreResponse"
             />
-            <div v-else>
+            <template v-else>
                 <div
                     class="mb-3"
                     v-for="(field, i) in fields"
@@ -18,24 +18,28 @@
                                 *
                             </span>
                         </label>
+
                         <input
                             v-if="field.type === 'SINGLE_LINE_TEXT'"
                             type="text"
-                            class="form-control"
+                            :class="errors.has(i) ? 'form-control is-invalid' : 'form-control'"
+                            :aria-describedby="i + 'Feedback'"
                             :id="fields.id + '#' + i"
                             v-model="responseFields[i]"
                         >
 
                         <textarea
                             v-else-if="field.type === 'MULTILINE_TEXT'"
-                            class="form-control"
+                            :class="errors.has(i) ? 'form-control is-invalid' : 'form-control'"
+                            :aria-describedby="i + 'Feedback'"
                             :id="fields.id + '#' + i"
                             v-model="responseFields[i]"
                         />
 
                         <select
                             v-else-if="field.type === 'COMBOBOX'"
-                            class="form-select"
+                            :class="errors.has(i) ? 'form-select is-invalid' : 'form-select'"
+                            :aria-describedby="i + 'Feedback'"
                             :id="fields.id + '#' + i"
                             v-model="responseFields[i]"
                         >
@@ -50,14 +54,21 @@
                         <input
                             v-else
                             type="date"
-                            class="form-control"
+                            :class="errors.has(i) ? 'form-control is-invalid' : 'form-control'"
+                            :aria-describedby="i + 'Feedback'"
                             :id="fields.id + '#' + i"
                             v-model="responseFields[i]"
                         >
+
+                        <div v-if="errors.has(i)" class="invalid-feedback" :id="i + 'Feedback'">
+                            {{errors.get(i)}}
+                        </div>
                     </template>
 
-                    <div v-else-if="field.type === 'RADIO_BUTTON' || field.type === 'CHECKBOX'">
-                        <template v-if="field.type === 'RADIO_BUTTON'" :id="fields.id + '#' + i">
+                    <div
+                        v-else-if="field.type === 'RADIO_BUTTON' || field.type === 'CHECKBOX'"
+                    >
+                        <div v-if="field.type === 'RADIO_BUTTON'" :class="(errors.has(i) && responseFields[i] === '') ? 'was-validated' : ''">
                             <span class="form-label">
                                 {{field.label}}
                                 <span v-if="field.required" class="text-danger">
@@ -67,7 +78,7 @@
 
                             <div
                                 class="form-check"
-                                v-for="option in field.options"
+                                v-for="(option, j) in field.options"
                             >
                                 <input
                                     type="radio"
@@ -75,6 +86,8 @@
                                     :id="field.id + '#' + option"
                                     :value="option"
                                     v-model="responseFields[i]"
+                                    name="radio-stacked"
+                                    required
                                 >
                                 <label
                                     class="form-check-label"
@@ -82,15 +95,16 @@
                                 >
                                     {{ option }}
                                 </label>
+
+                                <div v-if="errors.has(i) && j + 1 === field.options.length" class="invalid-feedback">
+                                    {{errors.get(i)}}
+                                </div>
                             </div>
-                        </template>
+                        </div>
 
                         <div v-else class="form-check">
                             <label class="form-check-label" :for="fields.id + '#' + i">
                                 {{field.label}}
-                                <span v-if="field.required" class="text-danger">
-                                    *
-                                </span>
                             </label>
                             <input
                                 type="checkbox"
@@ -104,9 +118,9 @@
 
                 <div class="text-center">
                     <button class="btn btn-primary me-2" @click="submit">Submit</button>
-                    <button class="btn btn-light text-primary" @click="reset">Reset</button>
+                    <button class="btn btn-light" @click="reset">Reset</button>
                 </div>
-            </div>
+            </template>
         </div>
         <div class="col-sm-4"></div>
     </div>
@@ -124,17 +138,29 @@
             return {
                 fields: [],
                 responseFields: [],
-                isSent: false
+                isSent: false,
+                errors: new Map
             }
         },
         methods: {
             ...mapActions(['addResponseAction']),
             submit() {
-                let responseBody = new Map()
+                this.errors = new Map
+
+                let responseBody = new Map
+
                 this.responseFields.forEach((item, i) => {
+                    if (this.fields[i].required && item === '') {
+                        this.errors.set(i, 'This field is necessary')
+                    }
+
                     const fieldId = this.fields[i].id
                     responseBody.set(fieldId, item)
                 })
+
+                if (this.errors.size > 0) {
+                    return
+                }
 
                 const response = {
                     body: Object.fromEntries(responseBody)

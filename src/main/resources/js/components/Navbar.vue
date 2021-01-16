@@ -1,10 +1,12 @@
 <template>
-    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #ffffff;">
+    <nav class="navbar navbar-expand-sm navbar-light" style="background-color: #ffffff;">
         <div class="container-fluid">
             <router-link class="navbar-brand" to="/">
                 <h4>
-                    <b>Micro</b>
-                    <b class="text-primary">Form</b>
+                    <b>
+                      Micro
+                      <span class="text-primary">Form</span>
+                    </b>
                 </h4>
             </router-link>
 

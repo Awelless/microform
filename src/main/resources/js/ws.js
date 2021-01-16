@@ -9,7 +9,6 @@ export function connect() {
     stompClient = Stomp.over(socket)
     stompClient.debug = () => {}
     stompClient.connect({} , frame => {
-        console.log('Connected: ' + frame)
         stompClient.subscribe('/topic/responses', message => {
             if (responseHandler !== null) {
                 responseHandler(JSON.parse(message.body))
@@ -25,6 +24,5 @@ export function setHandler(handler) {
 export function disconnect() {
     if (stompClient !== null) {
         stompClient.disconnect()
-        console.log('Disconnected')
     }
 }

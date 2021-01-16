@@ -5,6 +5,8 @@ target/
 !**/src/test/**/target/
 documentation/raw
 node_modules
+node
+src/main/resources/static/js
 
 ### IntelliJ IDEA ###
 .idea

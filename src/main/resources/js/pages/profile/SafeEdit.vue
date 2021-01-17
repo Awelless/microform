@@ -115,7 +115,7 @@
                     this.errors.set('email', `Email is necessary`)
                 }
 
-                if (this.phoneNumber.length > 0 && !this.phoneNumber.match(/\d{12}/)) {
+                if (this.phoneNumber.length > 0 && !this.phoneNumber.match(/\d{10,15}/)) {
                     this.errors.set('phoneNumber', `Phone number is invalid`)
                 }
 

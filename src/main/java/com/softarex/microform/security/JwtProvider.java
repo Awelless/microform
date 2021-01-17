@@ -27,13 +27,13 @@ public class JwtProvider {
 
     private final UserDetailsService userDetailsService;
 
+    public JwtProvider(UserDetailsServiceImpl userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
     @PostConstruct
     protected void init() {
         jwtSecret = Base64.getEncoder().encodeToString(jwtSecret.getBytes());
-    }
-
-    public JwtProvider(UserDetailsServiceImpl userDetailsService) {
-        this.userDetailsService = userDetailsService;
     }
 
     /**

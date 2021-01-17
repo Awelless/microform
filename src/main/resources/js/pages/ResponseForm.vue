@@ -129,7 +129,8 @@
 <script>
     import fieldsApi from '../api/fields'
     import ResponseSuccess from '../components/response/ResponseSuccess.vue'
-    import {mapActions} from 'vuex'
+    import {mapActions, mapMutations} from 'vuex'
+    import router from '../router'
 
     export default {
         name: 'ResponseForm',
@@ -144,6 +145,7 @@
         },
         methods: {
             ...mapActions(['addResponseAction']),
+            ...mapMutations(['removePrincipalMutation']),
             submit() {
                 this.errors = new Map
 
@@ -166,9 +168,9 @@
                     body: Object.fromEntries(responseBody)
                 }
 
-                this.isSent = true
-
                 this.addResponseAction(response)
+
+                this.isSent = true
 
                 this.reset()
             },
@@ -187,9 +189,14 @@
             }
         },
         async created() {
-            const response = await fieldsApi.getActive()
-            const data     = await response.json()
-            this.fields    = data.sort((a, b) => a.id - b.id)
+            fieldsApi.getActive().then(response => {
+                response.json().then(data => {
+                    this.fields = data.sort((a, b) => a.id - b.id)
+                })
+            }, response => {
+                this.removePrincipalMutation()
+                this.$router.push('/login')
+            })
 
             this.fields.forEach((item, i) => {
                 this.responseFields.push('')

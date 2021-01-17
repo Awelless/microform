@@ -105,6 +105,8 @@
 
 <script>
     import usersApi from '../api/users'
+    import {mapMutations} from 'vuex'
+    import {successMessage} from '../util/loginMessages'
 
     export default {
         name: 'Registration',
@@ -120,6 +122,7 @@
             }
         },
         methods: {
+            ...mapMutations(['addLoginMessageMutation']),
             isValid() {
                 this.errors = new Map
 
@@ -178,6 +181,7 @@
                 }
 
                 usersApi.save(user).then(response => {
+                    this.addLoginMessageMutation(successMessage('Account is created'))
                     this.$router.push('/login')
                 }, response => {
                     //email isn't unique
@@ -187,8 +191,6 @@
 
                     this.password = ''
                     this.confirmPassword = ''
-
-                    console.log(this.errors)
                 })
             }
         },

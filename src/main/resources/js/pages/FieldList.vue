@@ -85,23 +85,13 @@
                 this.field = field
             },
             success() {
-                console.log('success')
-
                 this.successMessage = 'Field is saved'
                 this.fieldFormChangeStatus()
-
-                console.log(this.successMessage)
             }
         },
         created() {
             if (this.$store.state.principal === null) {
-                this.$router.push('/')
-            }
-
-            try {
-                this.initFieldsAction()
-            } catch (e) {
-                console.log(e)
+                this.$router.push('/login')
             }
         }
     }

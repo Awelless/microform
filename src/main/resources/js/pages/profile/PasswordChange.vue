@@ -111,7 +111,11 @@
                     this.success = 'Password is updated'
                 }, response => {
                     response.json().then(data => {
-                        this.wrongPassword = true
+                        if (data.error === 'Invalid password') {
+                            this.wrongPassword = true
+                        } else {
+                            this.$router.push('/login')
+                        }
                     })
                 })
 

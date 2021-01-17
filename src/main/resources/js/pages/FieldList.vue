@@ -92,7 +92,12 @@
             if (this.$store.state.principal === null) {
                 this.$router.push('/')
             }
-            this.initFieldsAction()
+
+            try {
+                this.initFieldsAction()
+            } catch (e) {
+                console.log(e)
+            }
         }
     }
 </script>

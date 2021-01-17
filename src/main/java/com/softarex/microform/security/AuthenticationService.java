@@ -21,7 +21,7 @@ public class AuthenticationService {
     private final JwtProvider jwtProvider;
 
     /**
-     * Checks if email and password valid and creates cookie with token
+     * Checks if email and password are valid and creates cookie with token
      */
     public void authenticate(@NonNull final String email, @NonNull final String password, @NonNull HttpServletResponse response) {
         User user = userRepository.findByEmail(email);

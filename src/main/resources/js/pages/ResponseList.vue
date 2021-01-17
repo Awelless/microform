@@ -4,28 +4,31 @@
             <div class="col-sm-1"></div>
             <div class="col-sm-10">
                 <h4>Responses</h4>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th
-                            v-for="field in fields"
-                            :key="'field' + field.id"
-                            scope="col"
-                        >
-                            {{field.label}}
-                        </th>
-                    </tr>
-                    </thead>
 
-                    <tbody>
-                    <response-row
-                        v-for="response in sortedResponses"
-                        :key="response.id"
-                        :response-attr="response"
-                        :fields="fields"
-                    />
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th
+                                v-for="field in fields"
+                                :key="'field' + field.id"
+                                scope="col"
+                            >
+                                {{field.label}}
+                            </th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <response-row
+                            v-for="response in sortedResponses"
+                            :key="response.id"
+                            :response-attr="response"
+                            :fields="fields"
+                        />
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="col-sm-1"></div>
         </div>
@@ -55,5 +58,7 @@
 </script>
 
 <style scoped>
-
+    .table-responsive {
+        overflow-x: auto;
+    }
 </style>

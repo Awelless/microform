@@ -22,24 +22,29 @@
                     :success="success"
                 />
 
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Label</th>
-                            <th scope="col">Type</th>
-                            <th scope="col">Required</th>
-                            <th scope="col">Is Active</th>
-                            <th scope="col"></th>
-                            <th scope="col"></th>
-                        </tr>
-                    </thead>
-                    <field-row
-                        v-for="field in sortedFields"
-                        :key="field.id"
-                        :field="field"
-                        :edit-field="editField"
-                    />
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Label</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Required</th>
+                                <th scope="col">Is Active</th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <field-row
+                                v-for="field in sortedFields"
+                                :key="field.id"
+                                :field="field"
+                                :edit-field="editField"
+                            />
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="col-sm-1"></div>
         </div>
@@ -103,5 +108,7 @@
 </script>
 
 <style scoped>
-
+    .table-responsive {
+        overflow-x: auto;
+    }
 </style>

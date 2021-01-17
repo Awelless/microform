@@ -6,8 +6,16 @@
                 <h4>Log In</h4>
             </div>
 
-            <div v-if="error" class="alert alert-danger" role="alert">
-                {{error}}
+            <div v-if="loginMessage && loginMessage.type === 'SUCCESS'" class="alert alert-success" role="alert">
+                {{ loginMessage.text }}
+            </div>
+
+            <div v-if="loginMessage && loginMessage.type === 'INFO'" class="alert alert-primary" role="alert">
+                {{ loginMessage.text }}
+            </div>
+
+            <div v-if="loginMessage && loginMessage.type === 'FAILURE'" class="alert alert-danger" role="alert">
+                {{ loginMessage.text }}
             </div>
 
             <div class="mb-3">
@@ -28,20 +36,24 @@
 </template>
 
 <script>
-    import {mapActions} from 'vuex'
+    import {mapActions, mapGetters, mapMutations} from 'vuex'
+    import {failureMessage} from '../util/loginMessages'
 
     export default {
         name: 'Login',
         data() {
             return {
                 email: '',
-                password: '',
-                error: null
+                password: ''
             }
         },
+        computed: mapGetters(['loginMessage']),
         methods: {
             ...mapActions(['initFieldsAction', 'initPrincipalAction']),
+            ...mapMutations(['addLoginMessageMutation', 'removeLoginMessageMutation']),
             async doLogIn() {
+                this.removeLoginMessageMutation()
+
                 if (this.username === '' || this.password === '') {
                     return
                 }
@@ -52,7 +64,7 @@
                     this.$router.push('/')
                 }, response => {
                     response.json().then(data => {
-                        this.error = data.error
+                        this.addLoginMessageMutation(failureMessage(data.error))
                     })
                     this.password = ''
                 })
@@ -62,6 +74,10 @@
             if (this.$store.state.principal !== null) {
                 this.$router.push('/')
             }
+        },
+        beforeRouteLeave(to, from, next) {
+            this.removeLoginMessageMutation()
+            next()
         }
     }
 </script>

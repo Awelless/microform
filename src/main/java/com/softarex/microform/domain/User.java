@@ -69,7 +69,7 @@ public class User implements UserDetails {
     private String lastName;
 
     @Pattern(
-            regexp  = "^(\\d{12}|)$",
+            regexp  = "^(\\d{10,15}|)$",
             message = "Phone number is invalid",
             groups  = Validation.Edit.class
     )

@@ -164,10 +164,14 @@
                     options: options
                 }
 
-                if (this.id) {
-                    this.updateFieldAction(fieldToSend)
-                } else {
-                    this.addFieldAction(fieldToSend)
+                try {
+                    if (this.id) {
+                        this.updateFieldAction(fieldToSend)
+                    } else {
+                        this.addFieldAction(fieldToSend)
+                    }
+                } catch (e) {
+                    this.$router.push('/login')
                 }
 
                 this.clear()

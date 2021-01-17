@@ -4,6 +4,8 @@ import Vuex from 'vuex'
 import fieldsApi from './api/fields'
 import responsesApi from './api/responses'
 import usersApi from './api/users'
+import router from './router'
+import {infoMessage} from './util/loginMessages'
 
 Vue.use(Vuex)
 
@@ -11,12 +13,14 @@ export default new Vuex.Store({
     state: {
         fields: [],
         responses: [],
-        principal: null
+        principal: null,
+        loginMessage: null
     },
     getters: {
         sortedFields: state => (state.fields).sort((a, b) => b.id - a.id),
         sortedResponses: state => (state.responses).sort((a, b) => b.id - a.id),
-        principal: state => state.principal
+        principal: state => state.principal,
+        loginMessage: state => state.loginMessage
     },
     mutations: {
         initFieldsMutation(state, fields) {
@@ -47,63 +51,100 @@ export default new Vuex.Store({
         },
         removePrincipalMutation(state) {
             state.principal = null
+        },
+        addLoginMessageMutation(state, message) {
+            state.loginMessage = message
+        },
+        removeLoginMessageMutation(state) {
+            state.loginMessage = null
         }
     },
     actions: {
         async initFieldsAction({commit}) {
-            const response = await fieldsApi.getAll()
-            const data     = await response.json()
-
-            commit('initFieldsMutation', data)
+            fieldsApi.getAll().then(response => {
+                response.json().then(data => {
+                    commit('initFieldsMutation', data)
+                })
+            }, response => {
+                commit('removePrincipalMutation')
+                commit('addLoginMessageMutation', infoMessage('Please, Log In again'))
+                router.push('/login')
+            })
         },
         async addFieldAction({commit}, field) {
-            const response = await fieldsApi.save(field)
-            const data     = await response.json()
-
-            commit('addFieldMutation', data)
+            fieldsApi.save(field).then(response => {
+                response.json().then(data => {
+                    commit('addFieldMutation', data)
+                })
+            }, response => {
+                commit('removePrincipalMutation')
+                commit('addLoginMessageMutation', infoMessage('Please, Log In again'))
+                router.push('/login')
+            })
         },
         async updateFieldAction({commit}, field) {
-            const response = await fieldsApi.update(field)
-            const data = await response.json()
-
-            commit('updateFieldMutation', data)
+            fieldsApi.update(field).then(response => {
+                response.json().then(data => {
+                    commit('updateFieldMutation', data)
+                })
+            }, response => {
+                commit('removePrincipalMutation')
+                commit('addLoginMessageMutation', infoMessage('Please, Log In again'))
+                router.push('/login')
+            })
         },
         async removeFieldAction({commit}, field) {
-            const response = await fieldsApi.remove(field.id)
-
-            if (response.ok) {
+            fieldsApi.remove(field.id).then(response => {
                 commit('removeFieldMutation', field)
-            }
+            }, response => {
+                commit('removePrincipalMutation')
+                commit('addLoginMessageMutation', infoMessage('Please, Log In again'))
+                router.push('/login')
+            })
         },
         async initResponsesAction({commit}) {
-            const response = await responsesApi.get()
-            const data     = await response.json()
-
-            commit('initResponsesMutation', data)
+            responsesApi.get().then(response => {
+                response.json().then(data => {
+                    commit('initResponsesMutation', data)
+                })
+            }, response => {
+                commit('removePrincipalMutation')
+                commit('addLoginMessageMutation', infoMessage('Please, Log In again'))
+                router.push('/login')
+            })
         },
         async addResponseAction({commit, state}, responseItem) {
-            const response = await responsesApi.save(responseItem)
-            const data     = await response.json()
+            responsesApi.save(responseItem).then(response => {
+                response.json().then(data => {
+                    if (state.responses.find(item => item.id === data.id)) {
+                        return
+                    }
 
-            if (state.responses.find(item => item.id === data.id)) {
-                return
-            }
-
-            commit('addResponseMutation', data)
+                    commit('addResponseMutation', data)
+                })
+            }, response => {
+                commit('removePrincipalMutation')
+                commit('addLoginMessageMutation', infoMessage('Please, Log In again'))
+                router.push('/login')
+            })
         },
         async initPrincipalAction({commit}) {
-            try {
-                const response = await usersApi.getMyProfile()
-                const data     = await response.json()
-
-                commit('updatePrincipalMutation', data)
-            } catch (error) {}
+            usersApi.getMyProfile().then(response => {
+                response.json().then(data => {
+                    commit('updatePrincipalMutation', data)
+                })
+            })
         },
         async updatePrincipalAction({commit}, principal) {
-            const response = await usersApi.update(principal)
-            const data     = await response.json()
-
-            commit('updatePrincipalMutation', data)
+            usersApi.update(principal).then(response => {
+                response.json().then(data => {
+                    commit('updatePrincipalMutation', data)      
+                })
+            }, response => {
+                commit('removePrincipalMutation')
+                commit('addLoginMessageMutation', infoMessage('Please, Log In again'))
+                router.push('/login')
+            })
         }
     }
 })

@@ -61,13 +61,30 @@
 
             <div class="row mb-3">
                 <div class="col">
-                    <input type="checkbox" class="form-check-input" id="required" v-model="required">
+                    <input
+                        type="checkbox"
+                        :class="errors.has('active') ? 'form-check-input is-invalid' : 'form-check-input'"
+                        id="required"
+                        aria-describedby="activeFeedback"
+                        v-model="required"
+                    >
                     <label for="required" class="form-check-label">Required</label>
                 </div>
 
                 <div class="col">
-                    <input type="checkbox" class="form-check-input" id="isActive" v-model="active">
+                    <input
+                        type="checkbox"
+                        :class="errors.has('active') ? 'form-check-input is-invalid' : 'form-check-input'"
+                        id="isActive"
+                        v-model="active"
+                    >
                     <label for="isActive" class="form-check-label">Is Active</label>
+                </div>
+
+                <div class="little">
+                    <div v-if="errors.has('active')" class="text-danger">
+                        {{errors.get('active')}}
+                    </div>
                 </div>
             </div>
 
@@ -118,6 +135,10 @@
                 if ((this.type === 'RADIO_BUTTON' || this.type === 'COMBOBOX') &&
                     options.length === 0) {
                     this.errors.set('options', `You should set at least 1 option`)
+                }
+
+                if (this.active === false && this.required === true) {
+                    this.errors.set('active', `Field can't be required and inactive at the same time`)
                 }
 
                 return this.errors.size === 0
@@ -184,5 +205,7 @@
 </script>
 
 <style scoped>
-
+    .little {
+        font-size: 14px;
+    }
 </style>

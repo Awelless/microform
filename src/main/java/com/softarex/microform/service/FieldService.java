@@ -69,6 +69,10 @@ public class FieldService {
     }
 
     private boolean isInvalid(@NonNull final Field field) {
+        if (field.isRequired() && !field.isActive()) {
+            throw new IllegalArgumentException("Field can't be required and inactive at the same time");
+        }
+
         //If field doesn't have options, it'll be 100% valid
         if (!field.getType().equals(FieldType.COMBOBOX) && !field.getType().equals(FieldType.RADIO_BUTTON)) {
             return false;

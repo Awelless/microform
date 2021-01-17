@@ -24,7 +24,7 @@
                             v-for="response in sortedResponses"
                             :key="response.id"
                             :response-attr="response"
-                            :fields="sortedFields"
+                            :fields="fields"
                         />
                         </tbody>
                     </table>
@@ -36,16 +36,23 @@
 </template>
 
 <script>
+    import fieldsApi from '../api/fields'
     import ResponseRow from '../components/response/ResponseRow.vue'
     import {mapActions, mapGetters} from 'vuex'
 
     export default {
         name: 'ResponseList',
         components: {ResponseRow},
-        computed: mapGetters(['sortedResponses', 'sortedFields']),
-        methods: mapActions(['initFieldsAction']),
-        created() {
-            this.initFieldsAction()
+        data() {
+            return {
+                fields: []
+            }
+        },
+        computed: mapGetters(['sortedResponses']),
+        async created() {
+            const response = await fieldsApi.getAll()
+            const data     = await response.json()
+            this.fields    = data.sort((a, b) => a.id - b.id)
         }
     }
 </script>

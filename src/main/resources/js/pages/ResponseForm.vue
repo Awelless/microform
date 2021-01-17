@@ -156,8 +156,10 @@
                         this.errors.set(i, 'This field is necessary')
                     }
 
-                    const fieldId = this.fields[i].id
-                    responseBody.set(fieldId, item)
+                    if (item !== '') {
+                        const fieldId = this.fields[i].id
+                        responseBody.set(fieldId, item)
+                    }
                 })
 
                 if (this.errors.size > 0) {
@@ -192,17 +194,17 @@
             fieldsApi.getActive().then(response => {
                 response.json().then(data => {
                     this.fields = data.sort((a, b) => a.id - b.id)
+
+                    this.fields.forEach((item, i) => {
+                        this.responseFields.push('')
+                        if (this.fields[i].type === 'CHECKBOX') {
+                            this.responseFields[i] = false
+                        }
+                    })
                 })
             }, response => {
                 this.removePrincipalMutation()
                 this.$router.push('/login')
-            })
-
-            this.fields.forEach((item, i) => {
-                this.responseFields.push('')
-                if (this.fields[i].type === 'CHECKBOX') {
-                    this.responseFields[i] = false
-                }
             })
         }
     }

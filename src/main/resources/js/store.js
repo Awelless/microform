@@ -60,7 +60,7 @@ export default new Vuex.Store({
         }
     },
     actions: {
-        async initFieldsAction({commit}) {
+        async initFieldsAction({commit, state}) {
             fieldsApi.getAll().then(response => {
                 response.json().then(data => {
                     commit('initFieldsMutation', data)

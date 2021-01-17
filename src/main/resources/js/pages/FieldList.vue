@@ -93,6 +93,8 @@
             if (this.$store.state.principal === null) {
                 this.$router.push('/login')
             }
+
+            this.initFieldsAction()
         }
     }
 </script>

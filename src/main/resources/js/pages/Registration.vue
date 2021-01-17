@@ -105,7 +105,7 @@
 
 <script>
     import usersApi from '../api/users'
-    import {mapMutations} from 'vuex'
+    import {mapGetters, mapMutations} from 'vuex'
     import {successMessage} from '../util/loginMessages'
 
     export default {
@@ -119,6 +119,14 @@
                 lastName: '',
                 phoneNumber: '',
                 errors: new Map
+            }
+        },
+        computed: mapGetters(['principal']),
+        watch: {
+            principal(newVal, oldVal) {
+                if (newVal !== null) {
+                    this.$router.push('/')
+                }
             }
         },
         methods: {
@@ -195,10 +203,10 @@
             }
         },
         created() {
-            if (this.$store.state.principal !== null) {
+            if (this.principal !== null) {
                 this.$router.push('/')
             }
-        }
+        },
     }
 </script>
 

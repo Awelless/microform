@@ -10,6 +10,7 @@ import com.softarex.microform.util.WebSocketSender;
 import lombok.AllArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.util.StringUtils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -64,8 +65,8 @@ public class ResponseService {
                     if (field.getType().equals(FieldType.COMBOBOX) || field.getType().equals(FieldType.RADIO_BUTTON)) {
 
                         String value = responseBody.get(field.getId());
-                        if (!field.getOptions().contains(value)) {
-                            throw new IllegalArgumentException("Field option is invalid");
+                        if ((!field.isRequired() && !StringUtils.isEmpty(value)) || (field.isRequired() && !field.getOptions().contains(value))) {
+                            throw new IllegalArgumentException("One of Field options is invalid");
                         }
                     }
                 });

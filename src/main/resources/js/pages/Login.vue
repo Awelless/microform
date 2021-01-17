@@ -47,7 +47,14 @@
                 password: ''
             }
         },
-        computed: mapGetters(['loginMessage']),
+        computed: mapGetters(['loginMessage', 'principal']),
+        watch: {
+            principal(newVal, oldVal) {
+                if (newVal !== null) {
+                    this.$router.push('/')
+                }
+            }
+        },
         methods: {
             ...mapActions(['initFieldsAction', 'initPrincipalAction']),
             ...mapMutations(['addLoginMessageMutation', 'removeLoginMessageMutation']),
@@ -71,7 +78,7 @@
             }
         },
         created() {
-            if (this.$store.state.principal !== null) {
+            if (this.principal !== null) {
                 this.$router.push('/')
             }
         },

@@ -152,7 +152,7 @@
             saved() {
                 this.createSuccess('Field is saved')
                 this.isFieldFormShown = false
-            }
+            },
         },
         created() {
             this.loadFieldsPageAction(1)

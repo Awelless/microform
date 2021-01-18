@@ -6,18 +6,13 @@ The working version is deployed on [Heroku](https://microform.herokuapp.com)
 
 ## How to install:
 
-1. Clone repository
-    ```
-    git clone https://github.com/Awelless/microform.git
-    ```
+1. [Download](https://github.com/Awelless/microform/releases/tag/v1.0.2) binary
 
-2. Edit [application.properties](src/main/resources/application.properties)
-   
+2. Save to the folder with binary and Edit [application.properties](src/main/resources/application.properties)
 
-3. Compile and build program
+3. Run program
     ```
-    mvn compile
-    mvn package
+    java -jar microform-1.0.2.jar --spring.config.location=application.properties
     ``` 
     
 

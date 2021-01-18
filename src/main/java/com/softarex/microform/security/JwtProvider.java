@@ -16,6 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
 
+/**
+ * Creates and validates JWT
+ */
 @Component
 public class JwtProvider {
     @Value("${jwt.cookie}")

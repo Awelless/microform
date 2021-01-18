@@ -22,13 +22,7 @@ public class FieldController {
     private final FieldService fieldService;
 
     @GetMapping
-    public PageDto<Field> getAllFields(
-            @PageableDefault(
-                    sort = "id",
-                    direction = Sort.Direction.DESC,
-                    value = ControllerUtils.PAGE_SIZE
-            ) Pageable pageable
-    ) {
+    public PageDto<Field> getAllFields(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         return fieldService.getAll(pageable);
     }
 

@@ -6,7 +6,7 @@ The working version is deployed on [Heroku](https://microform.herokuapp.com)
 
 ## How to install:
 
-1. [Download](https://github.com/Awelless/microform/releases/tag/v1.0.3) binary
+1. [Download](https://github.com/Awelless/microform/releases/tag/v1.0.3.2) binary
 
 2. Save to the folder with binary and Edit [application.properties](src/main/resources/application.properties)
 

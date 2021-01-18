@@ -14,12 +14,11 @@
         name: 'App',
         components: {AppHeader},
         methods: {
-            ...mapActions(['initPrincipalAction', 'initResponsesAction']),
+            ...mapActions(['initPrincipalAction']),
             ...mapMutations(['addResponseMutation'])
         },
         created() {
             this.initPrincipalAction()
-            this.initResponsesAction()
 
             connect()
             setHandler(data => {

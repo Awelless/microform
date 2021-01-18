@@ -29,6 +29,7 @@
                         </tbody>
                     </table>
                 </div>
+                <lazy-loader />
             </div>
             <div class="col-sm-1"></div>
         </div>
@@ -39,10 +40,11 @@
     import fieldsApi from '../api/fields'
     import ResponseRow from '../components/response/ResponseRow.vue'
     import {mapActions, mapGetters} from 'vuex'
+    import LazyLoader from '../components/LazyLoader.vue'
 
     export default {
         name: 'ResponseList',
-        components: {ResponseRow},
+        components: {LazyLoader, ResponseRow},
         data() {
             return {
                 fields: []
@@ -50,7 +52,7 @@
         },
         computed: mapGetters(['sortedResponses']),
         async created() {
-            const response = await fieldsApi.getAll()
+            const response = await fieldsApi.getActive()
             const data     = await response.json()
             this.fields    = data.sort((a, b) => a.id - b.id)
         }

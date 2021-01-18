@@ -102,7 +102,7 @@
 
     export default {
         name: 'FieldForm',
-        props: ['field', 'success'],
+        props: ['field', 'saved'],
         data () {
             return {
                 id: null,
@@ -175,7 +175,7 @@
                 }
 
                 this.clear()
-                this.success()
+                this.saved()
             },
             clear() {
                 this.id       = null

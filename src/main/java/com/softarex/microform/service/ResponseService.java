@@ -4,16 +4,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.softarex.microform.domain.Response;
 import com.softarex.microform.domain.field.Field;
 import com.softarex.microform.domain.field.FieldType;
+import com.softarex.microform.dto.PageDto;
 import com.softarex.microform.repository.FieldRepository;
 import com.softarex.microform.repository.ResponseRepository;
 import com.softarex.microform.util.WebSocketSender;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.util.StringUtils;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,8 +26,18 @@ public class ResponseService {
     private final FieldRepository fieldRepository;
     private final WebSocketSender wsSender;
 
-    public List<Response> getAll() {
-        return responseRepository.findAll();
+    /**
+     * @param pageable
+     * @return Page assigned to pageable
+     */
+    public PageDto<Response> getAll(Pageable pageable) {
+        Page<Response> page = responseRepository.findAll(pageable);
+
+        return new PageDto<>(
+                page.getContent(),
+                pageable.getPageNumber(),
+                page.getTotalPages()
+        );
     }
 
     /**
@@ -65,7 +77,7 @@ public class ResponseService {
                     if (field.getType().equals(FieldType.COMBOBOX) || field.getType().equals(FieldType.RADIO_BUTTON)) {
 
                         String value = responseBody.get(field.getId());
-                        if ((!field.isRequired() && !StringUtils.isEmpty(value)) || (field.isRequired() && !field.getOptions().contains(value))) {
+                        if ((field.isRequired() || !StringUtils.isEmpty(value)) && !field.getOptions().contains(value)) {
                             throw new IllegalArgumentException("One of Field options is invalid");
                         }
                     }

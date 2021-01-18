@@ -15,7 +15,7 @@
 
     export default {
         name: 'FieldRow',
-        props: ['field', 'editField'],
+        props: ['field', 'editField', 'createSuccess'],
         data() {
             return {
                 type: ''
@@ -27,6 +27,7 @@
                 this.editField(this.field)
             },
             del() {
+                this.createSuccess('Field is deleted')
                 this.removeFieldAction(this.field)
             }
         },

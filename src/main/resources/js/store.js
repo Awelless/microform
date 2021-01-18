@@ -14,11 +14,13 @@ export default new Vuex.Store({
         fields: [],
         responses: [],
         principal: null,
-        loginMessage: null
+        loginMessage: null,
+        fieldPageParams: null
     },
     getters: {
-        sortedFields: state => (state.fields).sort((a, b) => b.id - a.id),
-        sortedResponses: state => (state.responses).sort((a, b) => b.id - a.id),
+        fieldPageParams: state => state.fieldPageParams,
+        fieldPage: state => state.fields,
+        sortedResponses: state => state.responses,
         principal: state => state.principal,
         loginMessage: state => state.loginMessage
     },
@@ -26,25 +28,23 @@ export default new Vuex.Store({
         initFieldsMutation(state, fields) {
             state.fields = fields
         },
-        addFieldMutation(state, field) {
-            state.fields.push(field)
-        },
         updateFieldMutation(state, field) {
             const updateIndex = state.fields.findIndex(item => item.id === field.id)
             state.fields.splice(updateIndex, 1, field)
-        },
-        removeFieldMutation(state, field) {
-            const deletionIndex = state.fields.findIndex(item => item.id === field.id)
-
-            if (deletionIndex > -1) {
-                state.fields.splice(deletionIndex, 1)
-            }
         },
         initResponsesMutation(state, responses) {
             state.responses = responses
         },
         addResponseMutation(state, response) {
-            state.responses.push(response)
+            state.responses.splice(0, 0, response)
+        },
+        addResponsePageMutation(state, responses) {
+            let allResponses = new Map
+
+            state.responses.forEach(value => allResponses.set(value.id, value))
+            responses.forEach(value => allResponses.set(value.id, value))
+
+            state.responses = Object.values(Object.fromEntries(allResponses)).reverse()
         },
         updatePrincipalMutation(state, principal) {
             state.principal = principal
@@ -57,13 +57,22 @@ export default new Vuex.Store({
         },
         removeLoginMessageMutation(state) {
             state.loginMessage = null
-        }
+        },
+        updatePageParamsMutation(state, pageParams) {
+            state.fieldPageParams = pageParams
+        },
     },
     actions: {
-        async initFieldsAction({commit, state}) {
-            fieldsApi.getAll().then(response => {
+        loadFieldsPageAction({dispatch, commit}, page) {
+            fieldsApi.page(page).then(response => {
                 response.json().then(data => {
-                    commit('initFieldsMutation', data)
+                    if (data.currentPage > data.totalPages && page > 1) {
+                        dispatch('loadFieldsPageAction', data.totalPages)
+                    } else {
+                        console.log(data)
+                        commit('initFieldsMutation', data.body)
+                        commit('updatePageParamsMutation', {currentPage: data.currentPage, totalPages: data.totalPages})
+                    }
                 })
             }, response => {
                 commit('removePrincipalMutation')
@@ -71,18 +80,16 @@ export default new Vuex.Store({
                 router.push('/login')
             })
         },
-        async addFieldAction({commit}, field) {
+        addFieldAction({dispatch, commit, state}, field) {
             fieldsApi.save(field).then(response => {
-                response.json().then(data => {
-                    commit('addFieldMutation', data)
-                })
+                dispatch('loadFieldsPageAction', 1)
             }, response => {
                 commit('removePrincipalMutation')
                 commit('addLoginMessageMutation', infoMessage('Please, Log In again'))
                 router.push('/login')
             })
         },
-        async updateFieldAction({commit}, field) {
+        updateFieldAction({commit}, field) {
             fieldsApi.update(field).then(response => {
                 response.json().then(data => {
                     commit('updateFieldMutation', data)
@@ -93,19 +100,23 @@ export default new Vuex.Store({
                 router.push('/login')
             })
         },
-        async removeFieldAction({commit}, field) {
+        removeFieldAction({dispatch, commit, state}, field) {
             fieldsApi.remove(field.id).then(response => {
-                commit('removeFieldMutation', field)
+                dispatch('loadFieldsPageAction', state.fieldPageParams.currentPage)
             }, response => {
                 commit('removePrincipalMutation')
                 commit('addLoginMessageMutation', infoMessage('Please, Log In again'))
                 router.push('/login')
             })
         },
-        async initResponsesAction({commit}) {
-            responsesApi.get().then(response => {
+        loadResponsesPageAction({commit, state}, {page, setFullyScrolled}) {
+            responsesApi.page(page).then(response => {
                 response.json().then(data => {
-                    commit('initResponsesMutation', data)
+                    if (data.currentPage > data.totalPages && page > 1) {
+                        setFullyScrolled()
+                    } else {
+                        commit('addResponsePageMutation', data.body)
+                    }
                 })
             }, response => {
                 commit('removePrincipalMutation')
@@ -113,7 +124,7 @@ export default new Vuex.Store({
                 router.push('/login')
             })
         },
-        async addResponseAction({commit, state}, responseItem) {
+        addResponseAction({commit, state}, responseItem) {
             responsesApi.save(responseItem).then(response => {
                 response.json().then(data => {
                     if (state.responses.find(item => item.id === data.id)) {
@@ -128,14 +139,14 @@ export default new Vuex.Store({
                 router.push('/login')
             })
         },
-        async initPrincipalAction({commit}) {
+        initPrincipalAction({commit}) {
             usersApi.getMyProfile().then(response => {
                 response.json().then(data => {
                     commit('updatePrincipalMutation', data)
                 })
             })
         },
-        async updatePrincipalAction({commit}, principal) {
+        updatePrincipalAction({commit}, principal) {
             usersApi.update(principal).then(response => {
                 response.json().then(data => {
                     commit('updatePrincipalMutation', data)      

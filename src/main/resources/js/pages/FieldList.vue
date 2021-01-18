@@ -19,7 +19,7 @@
                 <field-form
                     v-if="isFieldFormShown"
                     :field="field"
-                    :success="success"
+                    :saved="saved"
                 />
 
                 <div class="table-responsive">
@@ -37,14 +37,31 @@
 
                         <tbody>
                             <field-row
-                                v-for="field in sortedFields"
+                                v-for="field in fieldPage"
                                 :key="field.id"
                                 :field="field"
                                 :edit-field="editField"
+                                :create-success="createSuccess"
                             />
                         </tbody>
                     </table>
                 </div>
+
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        <template v-for="page in pages">
+                            <li v-if="page === null" class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                            <li v-else-if="page === fieldPageParams.currentPage" class="page-item active">
+                                <span class="page-link">{{page}}</span>
+                            </li>
+                            <li v-else class="page-item">
+                                <a class="page-link" @click="loadPage(page)" href="#">{{page}}</a>
+                            </li>
+                        </template>
+                    </ul>
+                </nav>
             </div>
             <div class="col-sm-1"></div>
         </div>
@@ -63,12 +80,56 @@
             return {
                 field: null,
                 isFieldFormShown: false,
-                successMessage: null
+                successMessage: null,
+                pages: []
             }
         },
-        computed: mapGetters(['sortedFields']),
+        computed: mapGetters(['fieldPage', 'fieldPageParams', 'principal']),
+        watch: {
+            principal(newVal, oldVal) {
+                if (newVal === null) {
+                    this.$router.push('/')
+                } else {
+                    this.loadFieldsPageAction(1)
+                }
+            },
+            fieldPageParams(newVal, oldVal) {
+                this.initPages(newVal)
+            }
+        },
         methods: {
-            ...mapActions(['initFieldsAction']),
+            ...mapActions(['loadFieldsPageAction']),
+            initPages(fieldPageParams) {
+                this.pages = []
+                const current = this.fieldPageParams.currentPage
+                const total = this.fieldPageParams.totalPages
+
+                if (total <= 9) {
+                    for (let i = 1; i <= total; ++i) {
+                        this.pages.push(i)
+                    }
+                } else if (current <= 5) {
+                    for (let i = 1; i <= 7; ++i) {
+                        this.pages.push(i)
+                    }
+                    this.pages.push(null, total)
+                } else if (current >= total - 4) {
+                    this.pages.push(1, null)
+                    for (let i = total - 6; i <= total; ++i) {
+                        this.pages.push(i)
+                    }
+                } else {
+                    this.pages.push(1, null)
+                    for (let i = current - 2; i <= current + 2; ++i) {
+                        this.pages.push(i)
+                    }
+                    this.pages.push(null, total)
+                }
+            },
+            createSuccess(message) {
+                this.successMessage = message
+                this.isFieldFormShown = false
+            },
             fieldFormChangeStatus() {
                 if (this.isFieldFormShown === true) {
                     this.field = null
@@ -84,17 +145,17 @@
                 this.isFieldFormShown = true
                 this.field = field
             },
-            success() {
-                this.successMessage = 'Field is saved'
-                this.fieldFormChangeStatus()
+            loadPage(page) {
+                this.successMessage = null
+                this.loadFieldsPageAction(page)
+            },
+            saved() {
+                this.createSuccess('Field is saved')
+                this.isFieldFormShown = false
             }
         },
         created() {
-            if (this.$store.state.principal === null) {
-                this.$router.push('/login')
-            }
-
-            this.initFieldsAction()
+            this.loadFieldsPageAction(1)
         }
     }
 </script>

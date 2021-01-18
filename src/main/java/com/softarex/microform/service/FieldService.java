@@ -2,10 +2,13 @@ package com.softarex.microform.service;
 
 import com.softarex.microform.domain.field.Field;
 import com.softarex.microform.domain.field.FieldType;
+import com.softarex.microform.dto.PageDto;
 import com.softarex.microform.repository.FieldRepository;
 import com.softarex.microform.repository.ResponseRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +20,18 @@ public class FieldService {
     private final FieldRepository fieldRepository;
     private final ResponseRepository responseRepository;
 
-    public List<Field> getAll() {
-        return fieldRepository.findAll();
+    /**
+     * @param pageable
+     * @return Page assigned to pageable
+     */
+    public PageDto<Field> getAll(Pageable pageable) {
+        Page<Field> page = fieldRepository.findAll(pageable);
+
+        return new PageDto<>(
+                page.getContent(),
+                pageable.getPageNumber(),
+                page.getTotalPages()
+        );
     }
 
     /**

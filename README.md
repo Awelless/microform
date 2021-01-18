@@ -12,7 +12,7 @@ The working version is deployed on [Heroku](https://microform.herokuapp.com)
 
 3. Run program
     ```
-    java -jar microform-1.0.2.jar --spring.config.location=application.properties
+    java -jar microform-1.0.3.jar --spring.config.location=application.properties
     ``` 
     
 

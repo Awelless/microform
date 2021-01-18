@@ -1,8 +1,12 @@
 package com.softarex.microform.controller;
 
 import com.softarex.microform.domain.field.Field;
+import com.softarex.microform.dto.PageDto;
 import com.softarex.microform.service.FieldService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -18,8 +22,14 @@ public class FieldController {
     private final FieldService fieldService;
 
     @GetMapping
-    public List<Field> getAllFields() {
-        return fieldService.getAll();
+    public PageDto<Field> getAllFields(
+            @PageableDefault(
+                    sort = "id",
+                    direction = Sort.Direction.DESC,
+                    value = ControllerUtils.PAGE_SIZE
+            ) Pageable pageable
+    ) {
+        return fieldService.getAll(pageable);
     }
 
     @GetMapping("/active")

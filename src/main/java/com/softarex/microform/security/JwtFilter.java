@@ -15,6 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * Filters every request and checks Authentication cookie
+ */
 @Component
 @AllArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {

@@ -114,6 +114,7 @@ export default new Vuex.Store({
                     if (data.currentPage >= data.totalPages) {
                         setFullyScrolled()
                     }
+
                     commit('addResponsePageMutation', data.body)
                 })
             }, response => {

@@ -78,7 +78,6 @@
         },
         methods: {
             isValid() {
-                this.wrongPassword = false
                 this.errors = new Map
 
                 if (this.newPassword.length < 6 || this.newPassword.length > 255) {
@@ -96,6 +95,9 @@
                 return this.errors.size === 0
             },
             save() {
+                this.wrongPassword = false
+                this.success = null
+
                 if (!this.isValid()) {
                     this.currentPassword = ''
                     this.newPassword = ''

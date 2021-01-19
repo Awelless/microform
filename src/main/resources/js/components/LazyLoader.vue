@@ -15,6 +15,8 @@
         },
         methods: mapActions(['loadResponsesPageAction']),
         mounted() {
+            console.log()
+
             this.loadResponsesPageAction({
                 page: 1,
                 setFullyScrolled: () => this.isFullyScrolled = true

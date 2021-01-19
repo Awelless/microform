@@ -27,8 +27,7 @@ public class ResponseService {
     private final WebSocketSender wsSender;
 
     /**
-     * @param pageable
-     * @return Page assigned to pageable
+     * @return Page assigned to number
      */
     public PageDto<Response> getAll(Pageable pageable) {
         Page<Response> page = responseRepository.findAll(pageable);
@@ -46,9 +45,7 @@ public class ResponseService {
      * @return Created Response from DB
      */
     public Response create(@NonNull final Response response) throws JsonProcessingException {
-        if (isInvalid(response)) {
-            throw new IllegalArgumentException("Response is invalid");
-        }
+        checkValidity(response);
 
         Response createdResponse = responseRepository.save(response);
 
@@ -58,31 +55,38 @@ public class ResponseService {
         return createdResponse;
     }
 
-    private boolean isInvalid(@NonNull final Response response) {
+    /**
+     * Checks validity of response and throws exception if it isn't valid
+     * @param response - Response to validate
+     */
+    private void checkValidity(@NonNull final Response response) {
         Set<Field> fields = new HashSet<>(fieldRepository.findAll());
         Map<Long, String> responseBody = response.getBody();
 
         responseBody.forEach((fieldId, value) -> {
-                if (!fields.contains(new Field(fieldId))) {
-                    throw new IllegalArgumentException("One of fields is invalid");
-                }
-            });
+            //Checks if field exist
+            if (!fields.contains(new Field(fieldId))) {
+                throw new IllegalArgumentException("One of submitted fields doesn't exist");
+            }
+            //Checks if field isn't blank
+            if (StringUtils.isEmptyOrWhitespace(value)) {
+                throw new IllegalArgumentException("One of submitted fields is blank");
+            }
+        });
 
         fields.forEach(field -> {
-                    //Check on required fields
-                    if (field.isRequired() && !responseBody.containsKey(field.getId())) {
-                        throw new IllegalArgumentException("Required field is empty");
-                    }
-                    //Check on valid options in option fields
-                    if (field.getType().equals(FieldType.COMBOBOX) || field.getType().equals(FieldType.RADIO_BUTTON)) {
+            //Checks if all required fields attend
+            if (field.isRequired() && !responseBody.containsKey(field.getId())) {
+                throw new IllegalArgumentException("Required field is empty");
+            }
+            //Checks if options in option fields is valid
+            if (field.getType().equals(FieldType.COMBOBOX) || field.getType().equals(FieldType.RADIO_BUTTON)) {
 
-                        String value = responseBody.get(field.getId());
-                        if ((field.isRequired() || !StringUtils.isEmpty(value)) && !field.getOptions().contains(value)) {
-                            throw new IllegalArgumentException("One of Field options is invalid");
-                        }
-                    }
-                });
-
-        return false;
+                String value = responseBody.get(field.getId());
+                if (value != null && !field.getOptions().contains(value)) {
+                    throw new IllegalArgumentException("One of field options is invalid");
+                }
+            }
+        });
     }
 }

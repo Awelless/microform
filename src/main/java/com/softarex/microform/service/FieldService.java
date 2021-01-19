@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.util.StringUtils;
 
 import java.util.List;
 
@@ -21,8 +22,7 @@ public class FieldService {
     private final ResponseRepository responseRepository;
 
     /**
-     * @param pageable
-     * @return Page assigned to pageable
+     * @return Page assigned to number
      */
     public PageDto<Field> getAll(Pageable pageable) {
         Page<Field> page = fieldRepository.findAll(pageable);
@@ -46,9 +46,7 @@ public class FieldService {
      * @return Created field from DB
      */
     public Field create(@NonNull final Field field) {
-        if (isInvalid(field)) {
-            throw new IllegalArgumentException("You should choose at least 1 option");
-        }
+        checkValidity(field);
 
         return fieldRepository.save(field);
     }
@@ -60,9 +58,7 @@ public class FieldService {
      * @return Updated Field from DB
      */
     public Field update(@NonNull Field field, @NonNull final Field newField) {
-        if (isInvalid(newField)) {
-            throw new IllegalArgumentException("You should set at least 1 option");
-        }
+        checkValidity(field);
 
         BeanUtils.copyProperties(newField, field, "id", "options");
         field.setOptions(newField.getOptions());
@@ -81,30 +77,32 @@ public class FieldService {
         fieldRepository.delete(field);
     }
 
-    private boolean isInvalid(@NonNull final Field field) {
+    /**
+     * Further validation of field. Throws exception if it isn't valid
+     * @param field - Response to validate
+     */
+    private void checkValidity(@NonNull final Field field) {
         if (field.isRequired() && !field.isActive()) {
             throw new IllegalArgumentException("Field can't be required and inactive at the same time");
         }
 
         //If field doesn't have options, it'll be 100% valid
         if (!field.getType().equals(FieldType.COMBOBOX) && !field.getType().equals(FieldType.RADIO_BUTTON)) {
-            return false;
+            return;
         }
 
         if (field.getOptions() == null || field.getOptions().size() == 0) {
-            return true;
+            throw new IllegalArgumentException("You should set at least 1 option");
         }
 
         //Validating every option
         field.getOptions().forEach(option -> {
-            if (option == null || option.isBlank()) {
+            if (StringUtils.isEmptyOrWhitespace(option)) {
                 throw new IllegalArgumentException("Field option shouldn't be blank");
             }
             if (option.length() > 255) {
                 throw new IllegalArgumentException("Field option shouldn't be longer than 255");
             }
         });
-
-        return false;
     }
 }

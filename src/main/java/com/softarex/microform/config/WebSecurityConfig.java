@@ -29,7 +29,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                     .antMatchers(HttpMethod.POST, "/api/auth/login").anonymous()
                     .antMatchers(HttpMethod.POST, "/api/users")     .anonymous()
-                    .antMatchers(HttpMethod.GET,  "/api/fields/**") .permitAll()
+                    .antMatchers(HttpMethod.GET,  "/api/fields/active") .permitAll()
                     .antMatchers("/static/**")    .permitAll()
                     .antMatchers("/api/responses").permitAll()
                     .antMatchers("/api/**")       .authenticated()

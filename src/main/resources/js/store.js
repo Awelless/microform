@@ -144,7 +144,7 @@ export default new Vuex.Store({
                 response.json().then(data => {
                     commit('updatePrincipalMutation', data)
                 })
-            })
+            }, response => {})
         },
         updatePrincipalAction({commit}, principal) {
             usersApi.update(principal).then(response => {

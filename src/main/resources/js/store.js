@@ -69,7 +69,6 @@ export default new Vuex.Store({
                     if (data.currentPage > data.totalPages && page > 1) {
                         dispatch('loadFieldsPageAction', data.totalPages)
                     } else {
-                        console.log(data)
                         commit('initFieldsMutation', data.body)
                         commit('updatePageParamsMutation', {currentPage: data.currentPage, totalPages: data.totalPages})
                     }
@@ -114,9 +113,8 @@ export default new Vuex.Store({
                 response.json().then(data => {
                     if (data.currentPage >= data.totalPages) {
                         setFullyScrolled()
-                    } else {
-                        commit('addResponsePageMutation', data.body)
                     }
+                    commit('addResponsePageMutation', data.body)
                 })
             }, response => {
                 commit('removePrincipalMutation')

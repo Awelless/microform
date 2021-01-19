@@ -151,6 +151,7 @@
             },
             saved() {
                 this.createSuccess('Field is saved')
+                this.field = null
                 this.isFieldFormShown = false
             },
         },

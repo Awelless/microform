@@ -112,7 +112,7 @@ export default new Vuex.Store({
         loadResponsesPageAction({commit, state}, {page, setFullyScrolled}) {
             responsesApi.page(page).then(response => {
                 response.json().then(data => {
-                    if (data.currentPage > data.totalPages && page > 1) {
+                    if (data.currentPage >= data.totalPages) {
                         setFullyScrolled()
                     } else {
                         commit('addResponsePageMutation', data.body)

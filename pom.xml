@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.softarex</groupId>
     <artifactId>microform</artifactId>
-    <version>1.0.3.3</version>
+    <version>1.0.4</version>
     <name>microform</name>
     <description>Internship in Softarex</description>
 

@@ -151,14 +151,20 @@
 
                 let responseBody = new Map
 
-                this.responseFields.forEach((item, i) => {
-                    if (this.fields[i].required && item === '') {
-                        this.errors.set(i, 'This field is necessary')
-                    }
+                this.responseFields.forEach((value, i) => {
+                    if (typeof value === 'boolean') {
+                        responseBody.set(this.fields[i].id, value)
+                    } else {
+                        const result = value.trim()
 
-                    if (item !== '') {
-                        const fieldId = this.fields[i].id
-                        responseBody.set(fieldId, item)
+                        if (this.fields[i].required && result.length === 0) {
+                            this.errors.set(i, 'This field is necessary')
+                        }
+
+                        if (result.length > 0) {
+                            const fieldId = this.fields[i].id
+                            responseBody.set(fieldId, result)
+                        }
                     }
                 })
 

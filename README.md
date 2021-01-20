@@ -4,7 +4,7 @@
 [Technical Task](./Technical_Task.pdf) <br/>
 The working version is deployed on [Heroku](https://microform.herokuapp.com)
 
-## How to install:
+## How to use:
 
 1. [Download](https://github.com/Awelless/microform/releases/tag/v1.0.5) binary
 

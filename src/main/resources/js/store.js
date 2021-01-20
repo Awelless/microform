@@ -5,7 +5,7 @@ import fieldsApi from './api/fields'
 import responsesApi from './api/responses'
 import usersApi from './api/users'
 import router from './router'
-import {infoMessage} from './util/loginMessages'
+import {infoMessage, failureMessage} from './util/loginMessages'
 
 Vue.use(Vuex)
 
@@ -14,7 +14,7 @@ export default new Vuex.Store({
         fields: [],
         responses: [],
         principal: null,
-        loginMessage: null,
+        message: null,
         fieldPageParams: null
     },
     getters: {
@@ -22,7 +22,7 @@ export default new Vuex.Store({
         fieldPage: state => state.fields,
         sortedResponses: state => state.responses,
         principal: state => state.principal,
-        loginMessage: state => state.loginMessage
+        message: state => state.message
     },
     mutations: {
         initFieldsMutation(state, fields) {
@@ -52,11 +52,11 @@ export default new Vuex.Store({
         removePrincipalMutation(state) {
             state.principal = null
         },
-        addLoginMessageMutation(state, message) {
-            state.loginMessage = message
+        updateMessageMutation(state, message) {
+            state.message = message
         },
-        removeLoginMessageMutation(state) {
-            state.loginMessage = null
+        removeMessageMutation(state) {
+            state.message = null
         },
         updatePageParamsMutation(state, pageParams) {
             state.fieldPageParams = pageParams
@@ -74,18 +74,30 @@ export default new Vuex.Store({
                     }
                 })
             }, response => {
-                commit('removePrincipalMutation')
-                commit('addLoginMessageMutation', infoMessage('Please, Log In again'))
-                router.push('/login')
+                if (response.status === 401) {
+                    commit('removePrincipalMutation')
+                    commit('addLoginMessageMutation', infoMessage('Please, Log In again'))
+                    router.push('/login')
+                } else {
+                    response.json().then(data => {
+                        commit('updateMessageMutation', failureMessage(data.error))
+                    })
+                }
             })
         },
         addFieldAction({dispatch, commit, state}, field) {
             fieldsApi.save(field).then(response => {
                 dispatch('loadFieldsPageAction', 1)
             }, response => {
-                commit('removePrincipalMutation')
-                commit('addLoginMessageMutation', infoMessage('Please, Log In again'))
-                router.push('/login')
+                if (response.status === 401) {
+                    commit('removePrincipalMutation')
+                    commit('addLoginMessageMutation', infoMessage('Please, Log In again'))
+                    router.push('/login')
+                } else {
+                    response.json().then(data => {
+                        commit('updateMessageMutation', failureMessage(data.error))
+                    })
+                }
             })
         },
         updateFieldAction({commit}, field) {
@@ -94,18 +106,30 @@ export default new Vuex.Store({
                     commit('updateFieldMutation', data)
                 })
             }, response => {
-                commit('removePrincipalMutation')
-                commit('addLoginMessageMutation', infoMessage('Please, Log In again'))
-                router.push('/login')
+                if (response.status === 401) {
+                    commit('removePrincipalMutation')
+                    commit('addLoginMessageMutation', infoMessage('Please, Log In again'))
+                    router.push('/login')
+                } else {
+                    response.json().then(data => {
+                        commit('updateMessageMutation', failureMessage(data.error))
+                    })
+                }
             })
         },
         removeFieldAction({dispatch, commit, state}, field) {
             fieldsApi.remove(field.id).then(response => {
                 dispatch('loadFieldsPageAction', state.fieldPageParams.currentPage)
             }, response => {
-                commit('removePrincipalMutation')
-                commit('addLoginMessageMutation', infoMessage('Please, Log In again'))
-                router.push('/login')
+                if (response.status === 401) {
+                    commit('removePrincipalMutation')
+                    commit('addLoginMessageMutation', infoMessage('Please, Log In again'))
+                    router.push('/login')
+                } else {
+                    response.json().then(data => {
+                        commit('updateMessageMutation', failureMessage(data.error))
+                    })
+                }
             })
         },
         loadResponsesPageAction({commit, state}, {page, setFullyScrolled}) {
@@ -118,9 +142,15 @@ export default new Vuex.Store({
                     commit('addResponsePageMutation', data.body)
                 })
             }, response => {
-                commit('removePrincipalMutation')
-                commit('addLoginMessageMutation', infoMessage('Please, Log In again'))
-                router.push('/login')
+                if (response.status === 401) {
+                    commit('removePrincipalMutation')
+                    commit('addLoginMessageMutation', infoMessage('Please, Log In again'))
+                    router.push('/login')
+                } else {
+                    response.json().then(data => {
+                        commit('updateMessageMutation', failureMessage(data.error))
+                    })
+                }
             })
         },
         addResponseAction({commit, state}, responseItem) {
@@ -133,9 +163,15 @@ export default new Vuex.Store({
                     commit('addResponseMutation', data)
                 })
             }, response => {
-                commit('removePrincipalMutation')
-                commit('addLoginMessageMutation', infoMessage('Please, Log In again'))
-                router.push('/login')
+                if (response.status === 401) {
+                    commit('removePrincipalMutation')
+                    commit('addLoginMessageMutation', infoMessage('Please, Log In again'))
+                    router.push('/login')
+                } else {
+                    response.json().then(data => {
+                        commit('updateMessageMutation', failureMessage(data.error))
+                    })
+                }
             })
         },
         initPrincipalAction({commit}) {
@@ -151,9 +187,15 @@ export default new Vuex.Store({
                     commit('updatePrincipalMutation', data)      
                 })
             }, response => {
-                commit('removePrincipalMutation')
-                commit('addLoginMessageMutation', infoMessage('Please, Log In again'))
-                router.push('/login')
+                if (response.status === 401) {
+                    commit('removePrincipalMutation')
+                    commit('addLoginMessageMutation', infoMessage('Please, Log In again'))
+                    router.push('/login')
+                } else {
+                    response.json().then(data => {
+                        commit('updateMessageMutation', failureMessage(data.error))
+                    })
+                }
             })
         }
     }

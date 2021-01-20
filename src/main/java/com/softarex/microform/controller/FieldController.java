@@ -48,10 +48,16 @@ public class FieldController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateField(
-            @PathVariable("id") Field oldField,
+            @PathVariable Long id,
             @Valid @RequestBody Field newField,
             BindingResult bindingResult
     ) {
+        Field oldField = fieldService.getById(id);
+
+        if (oldField == null) {
+            return ControllerUtils.getErrorResponse("Updated field doesn't exist. Please, reload page", HttpStatus.CONFLICT);
+        }
+
         if (bindingResult.hasErrors()) {
             return ControllerUtils.getErrorResponse(bindingResult);
         }

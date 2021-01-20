@@ -130,7 +130,7 @@
             }
         },
         methods: {
-            ...mapMutations(['addLoginMessageMutation']),
+            ...mapMutations(['updateMessageMutation']),
             isValid() {
                 this.errors = new Map
 

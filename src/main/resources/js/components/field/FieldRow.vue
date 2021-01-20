@@ -11,11 +11,12 @@
 </template>
 
 <script>
-    import {mapActions} from 'vuex'
+    import {mapActions, mapMutations} from 'vuex'
+    import {successMessage} from '../../util/loginMessages'
 
     export default {
         name: 'FieldRow',
-        props: ['field', 'editField', 'createSuccess'],
+        props: ['field', 'editField', 'shouldClearForm'],
         data() {
             return {
                 type: ''
@@ -23,11 +24,14 @@
         },
         methods: {
             ...mapActions(['removeFieldAction']),
+            ...mapMutations(['updateMessageMutation', 'removeMessageMutation']),
             edit() {
+                this.removeMessageMutation()
                 this.editField(this.field)
             },
             del() {
-                this.createSuccess('Field is deleted')
+                this.updateMessageMutation(successMessage('Field is deleted'))
+                this.shouldClearForm()
                 this.removeFieldAction(this.field)
             }
         },

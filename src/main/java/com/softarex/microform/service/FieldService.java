@@ -21,6 +21,10 @@ public class FieldService {
     private final FieldRepository fieldRepository;
     private final ResponseRepository responseRepository;
 
+    public Field getById(final long id) {
+        return fieldRepository.findById(id).orElse(null);
+    }
+
     /**
      * @return Page assigned to number
      */

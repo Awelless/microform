@@ -98,11 +98,11 @@
 </template>
 
 <script>
-    import {mapActions} from 'vuex'
+    import {mapActions, mapGetters} from 'vuex'
 
     export default {
         name: 'FieldForm',
-        props: ['field', 'saved'],
+        props: ['field', 'saved', 'shouldClearForm', 'setShouldClearForm'],
         data () {
             return {
                 id: null,
@@ -117,7 +117,7 @@
         watch: {
             field(newVal, oldVal) {
                 this.init(newVal)
-            }
+            },
         },
         methods: {
             ...mapActions(['addFieldAction', 'updateFieldAction']),
@@ -164,14 +164,10 @@
                     options: options
                 }
 
-                try {
-                    if (this.id) {
-                        this.updateFieldAction(fieldToSend)
-                    } else {
-                        this.addFieldAction(fieldToSend)
-                    }
-                } catch (e) {
-                    this.$router.push('/login')
+                if (this.id) {
+                    this.updateFieldAction(fieldToSend)
+                } else {
+                    this.addFieldAction(fieldToSend)
                 }
 
                 this.clear()

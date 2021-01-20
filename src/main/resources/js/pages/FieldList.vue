@@ -12,9 +12,7 @@
                     </div>
                 </div>
 
-                <div v-if="successMessage" class="alert alert-success mt-2">
-                    {{successMessage}}
-                </div>
+                <message />
 
                 <field-form
                     v-if="isFieldFormShown"
@@ -41,7 +39,7 @@
                                 :key="field.id"
                                 :field="field"
                                 :edit-field="editField"
-                                :create-success="createSuccess"
+                                :should-clear-form="shouldClearForm"
                             />
                         </tbody>
                     </table>
@@ -71,11 +69,13 @@
 <script>
     import FieldRow from '../components/field/FieldRow.vue'
     import FieldForm from '../components/field/FieldForm.vue'
-    import {mapActions, mapGetters} from 'vuex'
+    import {mapActions, mapGetters, mapMutations} from 'vuex'
+    import Message from '../components/Message.vue'
+    import {successMessage} from '../util/loginMessages'
 
     export default {
         name: 'FieldList',
-        components: {FieldForm, FieldRow},
+        components: {Message, FieldForm, FieldRow},
         data() {
             return {
                 field: null,
@@ -84,7 +84,7 @@
                 pages: []
             }
         },
-        computed: mapGetters(['fieldPage', 'fieldPageParams', 'principal']),
+        computed: mapGetters(['fieldPage', 'fieldPageParams', 'principal', 'message']),
         watch: {
             principal(newVal, oldVal) {
                 if (newVal === null) {
@@ -99,6 +99,7 @@
         },
         methods: {
             ...mapActions(['loadFieldsPageAction']),
+            ...mapMutations(['updateMessageMutation', 'removeMessageMutation']),
             initPages(fieldPageParams) {
                 this.pages = []
                 const current = this.fieldPageParams.currentPage
@@ -126,11 +127,9 @@
                     this.pages.push(null, total)
                 }
             },
-            createSuccess(message) {
-                this.successMessage = message
-                this.isFieldFormShown = false
-            },
             fieldFormChangeStatus() {
+                this.removeMessageMutation()
+
                 if (this.isFieldFormShown === true) {
                     this.field = null
                 } else {
@@ -140,6 +139,8 @@
                 this.isFieldFormShown = !this.isFieldFormShown
             },
             editField(field) {
+                this.removeMessageMutation()
+
                 this.successMessage = null
 
                 this.isFieldFormShown = true
@@ -147,13 +148,19 @@
             },
             loadPage(page) {
                 this.successMessage = null
+                this.removeMessageMutation()
                 this.loadFieldsPageAction(page)
             },
             saved() {
-                this.createSuccess('Field is saved')
-                this.field = null
                 this.isFieldFormShown = false
+                this.field = null
+
+                this.updateMessageMutation(successMessage('Field is created'))
             },
+            shouldClearForm(status) {
+                this.isFieldFormShown = false
+                this.field = null
+            }
         },
         created() {
             this.loadFieldsPageAction(1)

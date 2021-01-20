@@ -6,17 +6,7 @@
                 <h4>Log In</h4>
             </div>
 
-            <div v-if="loginMessage && loginMessage.type === 'SUCCESS'" class="alert alert-success" role="alert">
-                {{ loginMessage.text }}
-            </div>
-
-            <div v-if="loginMessage && loginMessage.type === 'INFO'" class="alert alert-primary" role="alert">
-                {{ loginMessage.text }}
-            </div>
-
-            <div v-if="loginMessage && loginMessage.type === 'FAILURE'" class="alert alert-danger" role="alert">
-                {{ loginMessage.text }}
-            </div>
+            <message />
 
             <div class="mb-3">
                 <input type="text" class="form-control" placeholder="Email" v-model="email" @keyup.enter="doLogIn">
@@ -38,16 +28,18 @@
 <script>
     import {mapActions, mapGetters, mapMutations} from 'vuex'
     import {failureMessage} from '../util/loginMessages'
+    import Message from '../components/Message.vue'
 
     export default {
         name: 'Login',
+        components: {Message},
         data() {
             return {
                 email: '',
                 password: ''
             }
         },
-        computed: mapGetters(['loginMessage', 'principal']),
+        computed: mapGetters(['principal']),
         watch: {
             principal(newVal, oldVal) {
                 if (newVal !== null) {
@@ -56,22 +48,21 @@
             }
         },
         methods: {
-            ...mapActions(['initFieldsAction', 'initPrincipalAction']),
-            ...mapMutations(['addLoginMessageMutation', 'removeLoginMessageMutation']),
-            async doLogIn() {
-                this.removeLoginMessageMutation()
+            ...mapActions(['initPrincipalAction']),
+            ...mapMutations(['updateMessageMutation', 'removeMessageMutation']),
+            doLogIn() {
+                this.removeMessageMutation()
 
                 if (this.username === '' || this.password === '') {
                     return
                 }
 
                 this.$http.post('/api/auth/login', {}, { params: {email: this.email, password: this.password}}).then(response => {
-                    this.initFieldsAction()
                     this.initPrincipalAction()
                     this.$router.push('/')
                 }, response => {
                     response.json().then(data => {
-                        this.addLoginMessageMutation(failureMessage(data.error))
+                        this.updateMessageMutation(failureMessage(data.error))
                     })
                     this.password = ''
                 })
@@ -83,7 +74,7 @@
             }
         },
         beforeRouteLeave(to, from, next) {
-            this.removeLoginMessageMutation()
+            this.removeMessageMutation()
             next()
         }
     }

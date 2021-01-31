@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@TestPropertySource(locations = "file:src/test/resources/application.properties")
+@TestPropertySource("/application-test.properties")
 public class UserServiceTest {
     @Autowired
     private UserService userService;

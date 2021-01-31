@@ -62,7 +62,7 @@ public class FieldService {
      * @return Updated Field from DB
      */
     public Field update(@NonNull Field field, @NonNull final Field newField) {
-        checkValidity(field);
+        checkValidity(newField);
 
         BeanUtils.copyProperties(newField, field, "id", "options");
         field.setOptions(newField.getOptions());

@@ -48,11 +48,13 @@ public class UserService {
      * @return Updated user from DB
      */
     public User update(@NonNull User user, @NonNull final User newUser) {
-        BeanUtils.copyProperties(newUser, user, "id", "email", "password");
+        BeanUtils.copyProperties(newUser, user,
+                "id", "email", "password");
         return userRepository.save(user);
     }
 
-    public boolean isPasswordCorrect(@NonNull final User user, @NonNull final String password) {
+    public boolean isPasswordCorrect(@NonNull final User user,
+                                     @NonNull final String password) {
         return passwordEncoder.matches(password, user.getPassword());
     }
 
@@ -71,7 +73,8 @@ public class UserService {
             throw new IllegalArgumentException("Password length should be from 6 to 255");
         }
         if (!newPassword.matches("\\w+")) {
-            throw new IllegalArgumentException("Password should contain only letters of latin alphabet, numbers and '_' symbol");
+            throw new IllegalArgumentException(
+                    "Password should contain only letters of latin alphabet, numbers and '_' symbol");
         }
 
         String encodedPassword = passwordEncoder.encode(newPassword);

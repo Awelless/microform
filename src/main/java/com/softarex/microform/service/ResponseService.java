@@ -79,12 +79,22 @@ public class ResponseService {
             if (field.isRequired() && !responseBody.containsKey(field.getId())) {
                 throw new IllegalArgumentException("Required field is empty");
             }
+
             //Checks if options in option fields is valid
-            if (field.getType().equals(FieldType.COMBOBOX) || field.getType().equals(FieldType.RADIO_BUTTON)) {
+            if (field.getType().equals(FieldType.COMBOBOX) ||
+                    field.getType().equals(FieldType.RADIO_BUTTON)) {
 
                 String value = responseBody.get(field.getId());
                 if (value != null && !field.getOptions().contains(value)) {
                     throw new IllegalArgumentException("One of field options is invalid");
+                }
+            }
+
+            if (field.getType().equals(FieldType.CHECKBOX)) {
+
+                String value = responseBody.get(field.getId());
+                if (!value.equals("false") && !value.equals("true")) {
+                    throw new IllegalArgumentException("Checkbox value should be only true/false");
                 }
             }
         });

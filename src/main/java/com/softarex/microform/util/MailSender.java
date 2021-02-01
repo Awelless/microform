@@ -18,7 +18,9 @@ public class MailSender {
         this.javaMailSender = javaMailSender;
     }
 
-    private void send(@NonNull final String emailTo, @NonNull final String subject, @NonNull final String message) {
+    private void send(@NonNull final String emailTo,
+            @NonNull final String subject, @NonNull final String message) {
+
         SimpleMailMessage mailMessage = new SimpleMailMessage();
 
         mailMessage.setFrom(emailFrom);

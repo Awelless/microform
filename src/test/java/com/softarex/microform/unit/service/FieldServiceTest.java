@@ -1,9 +1,10 @@
-package com.softarex.microform.service;
+package com.softarex.microform.unit.service;
 
 import com.softarex.microform.domain.field.Field;
 import com.softarex.microform.domain.field.FieldType;
 import com.softarex.microform.repository.FieldRepository;
 import com.softarex.microform.repository.ResponseRepository;
+import com.softarex.microform.service.FieldService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

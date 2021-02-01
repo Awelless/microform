@@ -30,14 +30,16 @@ public class ControllerUtils {
         );
     }
 
-    public static ResponseEntity<?> getErrorResponse(@NonNull final Exception e, @NonNull final HttpStatus status) {
+    public static ResponseEntity<?> getErrorResponse(@NonNull final Exception e,
+                                                     @NonNull final HttpStatus status) {
         return new ResponseEntity<>(
                 Collections.singletonMap("error", e.getMessage()),
                 status
         );
     }
 
-    public static ResponseEntity<?> getErrorResponse(@NonNull final String error, @NonNull final HttpStatus status) {
+    public static ResponseEntity<?> getErrorResponse(@NonNull final String error,
+                                                     @NonNull final HttpStatus status) {
         return new ResponseEntity<>(
                 Collections.singletonMap("error", error),
                 status

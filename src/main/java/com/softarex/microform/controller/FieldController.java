@@ -22,7 +22,8 @@ public class FieldController {
     private final FieldService fieldService;
 
     @GetMapping
-    public PageDto<Field> getAllFields(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public PageDto<Field> getAllFields(
+            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         return fieldService.getAll(pageable);
     }
 
@@ -32,7 +33,8 @@ public class FieldController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createField(@Valid @RequestBody Field field, BindingResult bindingResult) {
+    public ResponseEntity<?> createField(@Valid @RequestBody Field field,
+                                         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ControllerUtils.getErrorResponse(bindingResult);
         }
@@ -47,15 +49,14 @@ public class FieldController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateField(
-            @PathVariable Long id,
-            @Valid @RequestBody Field newField,
-            BindingResult bindingResult
-    ) {
+    public ResponseEntity<?> updateField(@PathVariable Long id,
+                                         @Valid @RequestBody Field newField,
+                                         BindingResult bindingResult) {
         Field oldField = fieldService.getById(id);
 
         if (oldField == null) {
-            return ControllerUtils.getErrorResponse("Updated field doesn't exist. Please, reload page", HttpStatus.CONFLICT);
+            return ControllerUtils.getErrorResponse(
+                    "Updated field doesn't exist. Please, reload page", HttpStatus.NOT_FOUND);
         }
 
         if (bindingResult.hasErrors()) {
@@ -72,7 +73,16 @@ public class FieldController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteField(@PathVariable("id") Field field) {
+    public ResponseEntity<?> deleteField(@PathVariable("id") Long id) {
+        Field field = fieldService.getById(id);
+
+        if (field == null) {
+            return ControllerUtils.getErrorResponse(
+                    "Deleted field doesn't exist. Please, reload page", HttpStatus.NOT_FOUND);
+        }
+
         fieldService.delete(field);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

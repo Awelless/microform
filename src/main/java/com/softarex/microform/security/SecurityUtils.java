@@ -8,7 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 
 public class SecurityUtils {
 
-    static void clearCookies(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response) {
+    static void clearCookies(@NonNull HttpServletRequest request,
+                             @NonNull HttpServletResponse response) {
         for (Cookie cookie : request.getCookies()) {
             cookie.setValue(null);
             cookie.setPath("/");

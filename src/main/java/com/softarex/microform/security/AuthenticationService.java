@@ -23,7 +23,10 @@ public class AuthenticationService {
     /**
      * Checks if email and password are valid and creates cookie with token
      */
-    public void authenticate(@NonNull final String email, @NonNull final String password, @NonNull HttpServletResponse response) {
+    public void authenticate(@NonNull final String email,
+                             @NonNull final String password,
+                             @NonNull HttpServletResponse response) {
+
         User user = userRepository.findByEmail(email);
 
         if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
@@ -40,7 +43,9 @@ public class AuthenticationService {
     /**
      * Logouts and clears all cookies
      */
-    public void logout(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response) {
+    public void logout(@NonNull HttpServletRequest request,
+                       @NonNull HttpServletResponse response) {
+
         SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
 
         SecurityUtils.clearCookies(request, response);

@@ -1,8 +1,9 @@
-package com.softarex.microform.service;
+package com.softarex.microform.unit.service;
 
 import com.softarex.microform.domain.User;
 import com.softarex.microform.exception.UserNotUniqueException;
 import com.softarex.microform.repository.UserRepository;
+import com.softarex.microform.service.UserService;
 import com.softarex.microform.util.MailSender;
 import org.junit.Assert;
 import org.junit.Before;

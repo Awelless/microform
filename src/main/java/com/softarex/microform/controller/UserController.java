@@ -34,10 +34,8 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createUser(
-            @Validated(Validation.Create.class) @RequestBody User user,
-            BindingResult bindingResult
-    ) {
+    public ResponseEntity<?> createUser(@Validated(Validation.Create.class) @RequestBody User user,
+                                        BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ControllerUtils.getErrorResponse(bindingResult);
         }
@@ -52,22 +50,25 @@ public class UserController {
     }
 
     @PutMapping
-    public User updateProfile(
-            @AuthenticationPrincipal User currentUser,
-            @Validated(Validation.Edit.class) @RequestBody User newUser
-    ) {
-        return userService.update(currentUser, newUser);
+    public ResponseEntity<?> updateProfile(@AuthenticationPrincipal User currentUser,
+            @Validated(Validation.Edit.class) @RequestBody User newUser,
+            BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return ControllerUtils.getErrorResponse(bindingResult);
+        }
+
+        return ResponseEntity.ok(userService.update(currentUser, newUser));
     }
 
     @PutMapping("/change-password")
-    public ResponseEntity<?> changePassword(
-            @AuthenticationPrincipal User currentUser,
-            @RequestParam String oldPassword,
-            @RequestParam String newPassword,
-            HttpServletResponse response
-    ) {
+    public ResponseEntity<?> changePassword(@AuthenticationPrincipal User currentUser,
+            @RequestParam String oldPassword, @RequestParam String newPassword,
+            HttpServletResponse response) {
+
         if (!userService.isPasswordCorrect(currentUser, oldPassword)) {
-            return ControllerUtils.getErrorResponse("Invalid password", HttpStatus.UNAUTHORIZED);
+            return ControllerUtils.getErrorResponse(
+                    "Invalid password", HttpStatus.UNAUTHORIZED);
         }
 
         User user;

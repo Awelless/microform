@@ -1,7 +1,9 @@
-package com.softarex.microform.security;
+package com.softarex.microform.unit.security;
 
 import com.softarex.microform.domain.User;
 import com.softarex.microform.exception.JwtAuthenticationException;
+import com.softarex.microform.security.JwtProvider;
+import com.softarex.microform.security.UserDetailsServiceImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

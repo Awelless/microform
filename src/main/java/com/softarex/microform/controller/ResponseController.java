@@ -19,7 +19,8 @@ public class ResponseController {
     private final ResponseService responseService;
 
     @GetMapping
-    public PageDto<Response> getAllResponses(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+    public PageDto<Response> getAllResponses(
+            @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         return responseService.getAll(pageable);
     }
 

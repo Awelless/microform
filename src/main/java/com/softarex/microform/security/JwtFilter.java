@@ -24,11 +24,10 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
 
     @Override
-    protected void doFilterInternal(
-            @NonNull HttpServletRequest request,
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain
-    ) throws ServletException, IOException {
+            @NonNull FilterChain filterChain) throws ServletException, IOException {
+
         String token = jwtProvider.resolveToken(request);
 
         try {
@@ -52,7 +51,8 @@ public class JwtFilter extends OncePerRequestFilter {
         }
     }
 
-    private void sendErrorMessage(@NonNull HttpServletResponse response, @NonNull final String message) throws IOException {
+    private void sendErrorMessage(@NonNull HttpServletResponse response,
+                                  @NonNull final String message) throws IOException {
         response.resetBuffer();
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

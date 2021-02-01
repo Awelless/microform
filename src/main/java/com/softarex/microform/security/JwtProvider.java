@@ -22,7 +22,7 @@ import java.util.Date;
 @Component
 public class JwtProvider {
     @Value("${jwt.cookie}")
-    private String jwtHeader;
+    private String jwtCookieName;
     @Value("${jwt.secret}")
     private String jwtSecret;
     @Value("${jwt.expiration}")
@@ -81,7 +81,7 @@ public class JwtProvider {
         }
 
         for (Cookie cookie : request.getCookies()) {
-            if (jwtHeader.equals(cookie.getName())) {
+            if (jwtCookieName.equals(cookie.getName())) {
                 return cookie.getValue();
             }
         }

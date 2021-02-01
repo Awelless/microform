@@ -20,11 +20,8 @@ public class AuthController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(
-            @RequestParam String email,
-            @RequestParam String password,
-            HttpServletResponse response
-    ) {
+    public ResponseEntity<?> login(@RequestParam String email, @RequestParam String password,
+                                   HttpServletResponse response) {
         try {
             authenticationService.authenticate(email, password, response);
             return new ResponseEntity<>(HttpStatus.OK);

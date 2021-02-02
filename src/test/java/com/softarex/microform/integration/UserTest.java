@@ -65,7 +65,7 @@ public class UserTest {
                 .andExpect(content().contentType(JSON))
                 .andReturn();
 
-        String content = result.getResponse().getContentAsString();
+        byte[] content = result.getResponse().getContentAsByteArray();
 
         User user = objectMapper.readValue(content, User.class);
 
@@ -98,7 +98,7 @@ public class UserTest {
                 .andExpect(content().contentType(JSON))
                 .andReturn();
 
-        String content = result.getResponse().getContentAsString();
+        byte[] content = result.getResponse().getContentAsByteArray();
 
         User userFromResponse = objectMapper.readValue(content, User.class);
 
@@ -122,7 +122,7 @@ public class UserTest {
                 .andExpect(content().contentType(JSON))
                 .andReturn();
 
-        String content = result.getResponse().getContentAsString();
+        byte[] content = result.getResponse().getContentAsByteArray();
 
         Map<?, ?> response = objectMapper.readValue(content, Map.class);
 
@@ -187,7 +187,7 @@ public class UserTest {
                 .andExpect(content().contentType(JSON))
                 .andReturn();
 
-        String content = result.getResponse().getContentAsString();
+        byte[] content = result.getResponse().getContentAsByteArray();
 
         User userFromResponse = objectMapper.readValue(content, User.class);
 
@@ -257,7 +257,7 @@ public class UserTest {
                 .andExpect(content().contentType(JSON))
                 .andReturn();
 
-        String content = result.getResponse().getContentAsString();
+        byte[] content = result.getResponse().getContentAsByteArray();
 
         Map<?, ?> errors = objectMapper.readValue(content, Map.class);
 
@@ -278,7 +278,7 @@ public class UserTest {
                 .andExpect(content().contentType(JSON))
                 .andReturn();
 
-        String content = result.getResponse().getContentAsString();
+        byte[] content = result.getResponse().getContentAsByteArray();
 
         Map<?, ?> errors = objectMapper.readValue(content, Map.class);
 

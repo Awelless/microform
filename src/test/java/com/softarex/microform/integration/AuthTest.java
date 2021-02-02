@@ -1,5 +1,6 @@
 package com.softarex.microform.integration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softarex.microform.security.JwtProvider;
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,6 +30,9 @@ public class AuthTest {
 
     @Autowired
     private JwtProvider jwtProvider;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Value("${jwt.cookie}")
     private String jwtCookieName;
@@ -67,6 +71,27 @@ public class AuthTest {
         Cookie authorizationCookie = result.getResponse().getCookie(jwtCookieName);
 
         Assert.assertNull(authorizationCookie);
+    }
+
+    @Test
+    public void testLoginShouldReturn403WhenAlreadyAuthorized() throws Exception {
+        String token = jwtProvider.createToken("t@gmail.com");
+
+        Cookie authorizationCookie = new Cookie(jwtCookieName, token);
+
+        MvcResult result = mockMvc
+                .perform(
+                        post("/api/auth/login")
+                                .cookie(authorizationCookie)
+                                .param("email", EMAIL)
+                                .param("password", "123456")
+                )
+                .andExpect(status().isForbidden())
+                .andReturn();
+
+        Cookie cookieFromResponse = result.getResponse().getCookie(jwtCookieName);
+
+        Assert.assertNull(cookieFromResponse);
     }
 
     @Test

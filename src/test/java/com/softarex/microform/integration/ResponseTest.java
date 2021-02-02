@@ -65,7 +65,7 @@ public class ResponseTest {
                 .andExpect(content().contentType("application/json"))
                 .andReturn();
 
-        String content = result.getResponse().getContentAsString();
+        byte[] content = result.getResponse().getContentAsByteArray();
 
         Response responseFromResponse = objectMapper.readValue(content, Response.class);
 
@@ -92,7 +92,7 @@ public class ResponseTest {
                 .andExpect(content().contentType("application/json"))
                 .andReturn();
 
-        String content = result.getResponse().getContentAsString();
+        byte[] content = result.getResponse().getContentAsByteArray();
 
         Map<?, ?> message = objectMapper.readValue(content, Map.class);
 
@@ -120,7 +120,7 @@ public class ResponseTest {
                 .andExpect(content().contentType("application/json"))
                 .andReturn();
 
-        String content = result.getResponse().getContentAsString();
+        byte[] content = result.getResponse().getContentAsByteArray();
 
         Map<?, ?> message = objectMapper.readValue(content, Map.class);
 
@@ -147,7 +147,7 @@ public class ResponseTest {
                 .andExpect(content().contentType("application/json"))
                 .andReturn();
 
-        String content = result.getResponse().getContentAsString();
+        byte[] content = result.getResponse().getContentAsByteArray();
 
         Map<?, ?> message = objectMapper.readValue(content, Map.class);
 
@@ -174,7 +174,7 @@ public class ResponseTest {
                 .andExpect(content().contentType("application/json"))
                 .andReturn();
 
-        String content = result.getResponse().getContentAsString();
+        byte[] content = result.getResponse().getContentAsByteArray();
 
         Map<?, ?> message = objectMapper.readValue(content, Map.class);
 
@@ -201,7 +201,7 @@ public class ResponseTest {
                 .andExpect(content().contentType("application/json"))
                 .andReturn();
 
-        String content = result.getResponse().getContentAsString();
+        byte[] content = result.getResponse().getContentAsByteArray();
 
         Map<?, ?> message = objectMapper.readValue(content, Map.class);
 

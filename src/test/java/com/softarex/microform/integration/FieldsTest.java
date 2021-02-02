@@ -108,7 +108,7 @@ public class FieldsTest {
                 .andExpect(content().contentType("application/json"))
                 .andReturn();
 
-        String content = result.getResponse().getContentAsString();
+        byte[] content = result.getResponse().getContentAsByteArray();
 
         Field fieldFromResponse = objectMapper.readValue(content, Field.class);
 
@@ -158,7 +158,7 @@ public class FieldsTest {
                 .andExpect(content().contentType("application/json"))
                 .andReturn();
 
-        String content = result.getResponse().getContentAsString();
+        byte[] content = result.getResponse().getContentAsByteArray();
 
         Field fieldFromResponse = objectMapper.readValue(content, Field.class);
 

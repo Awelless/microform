@@ -75,6 +75,7 @@ public class User implements UserDetails {
     )
     private String phoneNumber;
 
+    @JsonIgnore
     @Override
     public String getUsername() {
         return email;

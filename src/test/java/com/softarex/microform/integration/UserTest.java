@@ -1,5 +1,6 @@
 package com.softarex.microform.integration;
 
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softarex.microform.domain.User;
 import com.softarex.microform.security.JwtProvider;
@@ -34,8 +35,9 @@ public class UserTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper = new ObjectMapper().configure(
+            MapperFeature.USE_ANNOTATIONS, false
+    );
 
     @Autowired
     private JwtProvider jwtProvider;
@@ -48,10 +50,19 @@ public class UserTest {
     private static final String EMAIL = "t@gmail.com";
     private static final String JSON  = "application/json";
 
+    private User user;
+
     @Before
     public void init() {
         String token = jwtProvider.createToken(EMAIL);
         authenticationCookie = new Cookie(jwtCookieName, token);
+
+        user = new User();
+        user.setEmail(EMAIL);
+        user.setPassword("123456");
+        user.setFirstName("Gleb");
+        user.setLastName("Shilo");
+        user.setPhoneNumber("375447779900");
     }
 
     @Test
@@ -84,15 +95,13 @@ public class UserTest {
     public void testCreateUserShouldCreateWhenValidApplied() throws Exception {
         String email = "tt@gmail.com";
 
-        String userAsString = "{\"email\": \"" + email + "\", \"password\": \"123456\", " +
-                "\"firstName\": \"Gleb\", \"lastName\": \"Shilo\",\n" +
-                "                \"phoneNumber\": \"375447779900\"}";
+        user.setEmail(email);
 
         MvcResult result = mockMvc
                 .perform(
                         post("/api/users")
                                 .contentType(JSON)
-                                .content(userAsString)
+                                .content(objectMapper.writeValueAsString(user))
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(JSON))
@@ -108,15 +117,11 @@ public class UserTest {
 
     @Test
     public void testCreateUserShouldReturn422WhenNotUniqueEmailApplied() throws Exception {
-        String userAsString = "{\"email\": \"" + EMAIL + "\", \"password\": \"123456\", " +
-                "\"firstName\": \"Gleb\", \"lastName\": \"Shilo\",\n" +
-                "                \"phoneNumber\": \"375447779900\"}";
-
         MvcResult result = mockMvc
                 .perform(
                         post("/api/users")
                                 .contentType(JSON)
-                                .content(userAsString)
+                                .content(objectMapper.writeValueAsString(user))
                 )
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().contentType(JSON))
@@ -131,36 +136,49 @@ public class UserTest {
     }
 
     @Test
-    public void testCreateUserShouldReturn422WhenInvalidApplied() throws Exception {
-        String userAsString = "{\"email\": \"tt@gmail.com\", \"password\": \"123-=-==-456\", " +
-                "\"firstName\": \"Gleb\", \"lastName\": \"Shilo\",\n" +
-                "                \"phoneNumber\": \"375447779900\"}";
-
+    public void testCreateUserShouldReturn422WhenInvalidPasswordApplied() throws Exception {
+        user.setPassword("123--=-123");
 
         mockMvc
                 .perform(
                         post("/api/users")
                                 .contentType(JSON)
-                                .content(userAsString)
+                                .content(objectMapper.writeValueAsString(user))
                 )
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().contentType(JSON));
     }
 
     @Test
-    public void testCreateUserShouldReturn403WhenAuthorized() throws Exception {
-        String email = "tt@gmail.com";
+    public void testCreateUserShouldReturn422WhenIncorrectEmailApplied() throws Exception {
+        user.setEmail("t@gm.");
 
-        String userAsString = "{\"email\": \"" + email + "\", \"password\": \"123456\", " +
-                "\"firstName\": \"Gleb\", \"lastName\": \"Shilo\",\n" +
-                "                \"phoneNumber\": \"375447779900\"}";
+        MvcResult result = mockMvc
+                .perform(
+                        post("/api/users")
+                                .contentType(JSON)
+                                .content(objectMapper.writeValueAsString(user))
+                )
+                .andExpect(status().isUnprocessableEntity())
+                .andReturn();
+
+        byte[] content = result.getResponse().getContentAsByteArray();
+
+        Map<?, ?> errors = objectMapper.readValue(content, Map.class);
+
+        Assert.assertNotNull(errors);
+    }
+
+    @Test
+    public void testCreateUserShouldReturn403WhenAuthorized() throws Exception {
+        user.setEmail("tt@gmail.com");
 
         mockMvc
                 .perform(
                         post("/api/users")
                                 .cookie(authenticationCookie)
                                 .contentType(JSON)
-                                .content(userAsString)
+                                .content(objectMapper.writeValueAsString(user))
                 )
                 .andExpect(status().isForbidden());
     }
@@ -169,12 +187,7 @@ public class UserTest {
     public void testUpdateUserShouldUpdateSafeFieldsWhenValidApplied() throws Exception {
         String firstName = "Gleb";
 
-        User user = new User() {{
-            setFirstName(firstName);
-            setLastName("Shilo");
-            setPhoneNumber("375447779900");
-            setEmail("tt@gmail.com");
-        }};
+        user.setEmail("tt@gmail.com");
 
         MvcResult result = mockMvc
                 .perform(

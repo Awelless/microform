@@ -189,7 +189,7 @@
                 }
 
                 usersApi.save(user).then(response => {
-                    this.addLoginMessageMutation(successMessage('Account is created'))
+                    this.updateMessageMutation(successMessage('Account is created'))
                     this.$router.push('/login')
                 }, response => {
                     //email isn't unique

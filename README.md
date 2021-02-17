@@ -1,7 +1,6 @@
 # MicroForm
 ##### Internship in Softarex as Intern Java Developer
 
-[Technical Task](./Technical_Task.pdf) <br/>
 The working version is deployed on [Heroku](https://microform.herokuapp.com)
 
 ## How to use:
